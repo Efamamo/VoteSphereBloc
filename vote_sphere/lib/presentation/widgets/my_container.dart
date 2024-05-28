@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import '../providers/pole_provider.dart';
+import 'package:vote_sphere/presentation/screens/questions_model.dart';
+import '../../application/home/pole_provider.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class MyContainer extends StatelessWidget {
-  MyContainer({super.key, required this.question});
-  var question;
+  MyContainer({super.key, required this.poll});
+  Question poll;
   TextEditingController commentController = TextEditingController();
 
   @override
@@ -23,19 +24,19 @@ class MyContainer extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(question.question,
+              Text(poll.question,
                   style: const TextStyle(
                     fontSize: 20,
                   )),
               IconButton(
                   onPressed: () {
                     pollProvider.removeIndex(pollProvider
-                        .index[pollProvider.questions.indexOf(question)]);
+                        .index[pollProvider.questions.indexOf(poll)]);
                     pollProvider.removeVote(pollProvider
-                        .votes[pollProvider.questions.indexOf(question)]);
+                        .votes[pollProvider.questions.indexOf(poll)]);
                     pollProvider.removeDisabled(pollProvider
-                        .disabled[pollProvider.questions.indexOf(question)]);
-                    pollProvider.removeQuestion(question);
+                        .disabled[pollProvider.questions.indexOf(poll)]);
+                    pollProvider.removeQuestion(poll);
                   },
                   icon: Icon(
                     Icons.delete,
@@ -47,7 +48,7 @@ class MyContainer extends StatelessWidget {
         const Divider(
           height: 20,
         ),
-        ...question.answers.map((choice) => RadioListTile(
+        ...poll.answers.map((choice) => RadioListTile(
             fillColor: MaterialStateColor.resolveWith((states) {
               if (states.contains(MaterialState.selected)) {
                 return Colors.blue.shade700; // Active color
@@ -59,37 +60,35 @@ class MyContainer extends StatelessWidget {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text((((pollProvider.votes[pollProvider.questions
-                                        .indexOf(question)]
-                                    [question.answers.indexOf(choice)]) /
-                                pollProvider.sum(pollProvider.votes[pollProvider
-                                    .questions
-                                    .indexOf(question)])) *
+                Text((((pollProvider.votes[pollProvider.questions.indexOf(poll)]
+                                    [poll.answers.indexOf(choice)]) /
+                                pollProvider.sum(pollProvider.votes[
+                                    pollProvider.questions.indexOf(poll)])) *
                             100)
                         .toStringAsFixed(2) +
                     '%'),
                 LinearProgressIndicator(
                   borderRadius: BorderRadius.circular(2),
                   color: Colors.blue.shade700,
-                  value: (pollProvider
-                              .votes[pollProvider.questions.indexOf(question)]
-                          [question.answers.indexOf(choice)]) /
-                      pollProvider.sum(pollProvider
-                          .votes[pollProvider.questions.indexOf(question)]),
+                  value:
+                      (pollProvider.votes[pollProvider.questions.indexOf(poll)]
+                              [poll.answers.indexOf(choice)]) /
+                          pollProvider.sum(pollProvider
+                              .votes[pollProvider.questions.indexOf(poll)]),
                   minHeight: 4,
                 ),
               ],
             ),
             title: Text(choice),
-            value: 5 * pollProvider.questions.indexOf(question) +
-                question.answers.indexOf(choice),
+            value: 5 * pollProvider.questions.indexOf(poll) +
+                poll.answers.indexOf(choice),
             groupValue:
-                pollProvider.index[pollProvider.questions.indexOf(question)],
+                pollProvider.index[pollProvider.questions.indexOf(poll)],
             onChanged:
-                pollProvider.disabled[pollProvider.questions.indexOf(question)]
+                pollProvider.disabled[pollProvider.questions.indexOf(poll)]
                     ? null
                     : (value) {
-                        pollProvider.increamentVote(choice, question, value);
+                        pollProvider.increamentVote(choice, poll, value);
 
                         // disabled[questions
                         //         .indexOf(
@@ -104,7 +103,7 @@ class MyContainer extends StatelessWidget {
           child: Text("Comments",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         ),
-        ...question.comment.map((com) => Padding(
+        ...poll.comment.map((com) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -121,7 +120,7 @@ class MyContainer extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.delete, color: Colors.red[800]),
                     onPressed: () {
-                      pollProvider.removeComment(com, question);
+                      pollProvider.removeComment(com, poll);
                     },
                   )
                 ],
@@ -136,7 +135,7 @@ class MyContainer extends StatelessWidget {
                   icon: const Icon(Icons.send, color: Colors.blue),
                   onPressed: () {
                     if (commentController.text != "") {
-                      pollProvider.addComment(commentController.text, question);
+                      pollProvider.addComment(commentController.text, poll);
                       commentController.clear();
                     }
                   },

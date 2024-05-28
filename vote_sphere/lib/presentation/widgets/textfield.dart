@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class MyTextField extends StatefulWidget {
-  MyTextField(
+  const MyTextField(
       {super.key,
       required this.controller,
       required this.lines,
       required this.hintText});
-  String hintText;
-  int lines;
-  TextEditingController controller;
+  final String hintText;
+  final int lines;
+  final TextEditingController controller;
 
   @override
   State<MyTextField> createState() => _MyTextFieldState();

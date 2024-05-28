@@ -1,40 +1,52 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../providers/group_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyAlertDialog extends StatelessWidget {
   MyAlertDialog({super.key});
-  TextEditingController groupName = TextEditingController();
+  final TextEditingController groupName = TextEditingController();
+  final HomeBloc homeBLoc = HomeBloc();
 
   @override
   Widget build(BuildContext context) {
-    var groupProvider = Provider.of<GroupProvider>(context);
-    return AlertDialog(
-      backgroundColor: Colors.grey[200],
-      title: const Text(
-        "Create Group",
-        style: TextStyle(color: Colors.black),
-      ),
-      content: TextField(
-        controller: groupName,
-        decoration: const InputDecoration(
-            hintText: 'Enter Group Name',
-            hintStyle: TextStyle(color: Colors.black)),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            groupProvider.createGroup(groupName);
-
-            Navigator.pop(context);
-          },
-          child: const Text(
+    return BlocConsumer<HomeBloc, HomeState>(
+      bloc: homeBLoc,
+      listenWhen: (previous, current) => current is HomeActionState,
+      buildWhen: (previous, current) => current is! HomeActionState,
+      listener: (context, state) {
+        if (state is CreateGroupState) {
+          Navigator.pop(context);
+        }
+      },
+      builder: (context, state) {
+        return AlertDialog(
+          backgroundColor: Colors.grey[200],
+          title: const Text(
             "Create Group",
             style: TextStyle(color: Colors.black),
           ),
-        )
-      ],
+          content: TextField(
+            controller: groupName,
+            decoration: const InputDecoration(
+                hintText: 'Enter Group Name',
+                hintStyle: TextStyle(color: Colors.black)),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                if (groupName.text != '') {
+                  Navigator.pop(context);
+                  homeBLoc.add(CreateGroup(groupName: groupName.text));
+                }
+              },
+              child: const Text(
+                "Create Group",
+                style: TextStyle(color: Colors.black),
+              ),
+            )
+          ],
+        );
+      },
     );
     ;
   }

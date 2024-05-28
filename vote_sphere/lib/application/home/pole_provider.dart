@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import '../screens/questions_model.dart';
+import '../../presentation/screens/questions_model.dart';
 
 class PollProvider with ChangeNotifier {
   List<Question> _questions = [];

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../new_polls.dart';
 
 class NoPoll extends StatefulWidget {
-  NoPoll({super.key});
+  NoPoll({super.key, required this.role});
+  final role;
 
   @override
   State<NoPoll> createState() => _NoPollState();
@@ -39,6 +40,7 @@ class _NoPollState extends State<NoPoll> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.role);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -59,14 +61,18 @@ class _NoPollState extends State<NoPoll> {
         const SizedBox(
           height: 30,
         ),
-        ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5)),
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.blue[700]),
-            onPressed: navigateNewPolls,
-            child: const Text("Add Poll"))
+        widget.role == "Admin"
+            ? ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5)),
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue[700]),
+                onPressed: navigateNewPolls,
+                child: const Text("Add Poll"))
+            : const SizedBox(
+                height: 10,
+              )
       ],
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/textfield.dart';
-import '../providers/pole_provider.dart';
+import '../../application/home/pole_provider.dart';
 import 'package:provider/provider.dart';
 import 'questions_model.dart';
 

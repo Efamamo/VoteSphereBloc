@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:vote_sphere/presentation/screens/questions_model.dart';
 import '../../widgets/my_container.dart';
 import 'package:provider/provider.dart';
 import '../new_polls.dart';
-import '../../providers/pole_provider.dart';
+import '../../../application/home/pole_provider.dart';
 
 class MyPolls extends StatefulWidget {
-  MyPolls({super.key});
+  MyPolls({super.key, required this.polls});
+  List<Question> polls;
 
   @override
   State<MyPolls> createState() => _MyPollsState();
@@ -58,39 +60,10 @@ class _MyPollsState extends State<MyPolls> {
                 fontSize: 24,
                 fontWeight: FontWeight.bold)),
         Column(
-          children: [
-            ...pollProvider.questions
-                .map((question) => MyContainer(question: question))
-          ],
+          children: [...widget.polls.map((poll) => MyContainer(poll: poll))],
         ),
         const SizedBox(
           height: 20,
-        ),
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  // Navigate to the second page
-                  Navigator.pushNamed(context, 'feedBack');
-                },
-                child: const Text(
-                  'feedback',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.blue,
-                  ),
-                ),
-              ),
-              const Icon(
-                Icons.question_mark,
-                color: Colors.blue,
-                size: 18,
-              )
-            ],
-          ),
         ),
         const SizedBox(
           height: 20,

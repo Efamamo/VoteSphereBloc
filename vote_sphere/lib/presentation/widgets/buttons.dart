@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../screens/new_polls.dart';
 
 class MyButton extends StatelessWidget {
   const MyButton(
