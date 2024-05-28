@@ -64,3 +64,5 @@ class CreateGroupState extends HomeState {
       required this.token,
       required this.username});
 }
+
+class NavigateToAddPoles extends HomeActionState {}

@@ -6,13 +6,11 @@ import 'package:provider/provider.dart';
 // ignore: must_be_immutable
 class MyContainer extends StatelessWidget {
   MyContainer({super.key, required this.poll});
-  Question poll;
+  final poll;
   TextEditingController commentController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    var pollProvider = Provider.of<PollProvider>(context);
-
     return Container(
       margin: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -29,15 +27,7 @@ class MyContainer extends StatelessWidget {
                     fontSize: 20,
                   )),
               IconButton(
-                  onPressed: () {
-                    pollProvider.removeIndex(pollProvider
-                        .index[pollProvider.questions.indexOf(poll)]);
-                    pollProvider.removeVote(pollProvider
-                        .votes[pollProvider.questions.indexOf(poll)]);
-                    pollProvider.removeDisabled(pollProvider
-                        .disabled[pollProvider.questions.indexOf(poll)]);
-                    pollProvider.removeQuestion(poll);
-                  },
+                  onPressed: () {},
                   icon: Icon(
                     Icons.delete,
                     color: Colors.red[900],
@@ -48,7 +38,7 @@ class MyContainer extends StatelessWidget {
         const Divider(
           height: 20,
         ),
-        ...poll.answers.map((choice) => RadioListTile(
+        ...poll.options.map((option) => RadioListTile(
             fillColor: MaterialStateColor.resolveWith((states) {
               if (states.contains(MaterialState.selected)) {
                 return Colors.blue.shade700; // Active color
@@ -60,41 +50,24 @@ class MyContainer extends StatelessWidget {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text((((pollProvider.votes[pollProvider.questions.indexOf(poll)]
-                                    [poll.answers.indexOf(choice)]) /
-                                pollProvider.sum(pollProvider.votes[
-                                    pollProvider.questions.indexOf(poll)])) *
-                            100)
-                        .toStringAsFixed(2) +
-                    '%'),
+                Text('${option.numberOfVotes}%'),
                 LinearProgressIndicator(
-                  borderRadius: BorderRadius.circular(2),
-                  color: Colors.blue.shade700,
-                  value:
-                      (pollProvider.votes[pollProvider.questions.indexOf(poll)]
-                              [poll.answers.indexOf(choice)]) /
-                          pollProvider.sum(pollProvider
-                              .votes[pollProvider.questions.indexOf(poll)]),
-                  minHeight: 4,
-                ),
+                    borderRadius: BorderRadius.circular(2),
+                    color: Colors.blue.shade700,
+                    value: option.numberOfVotes),
               ],
             ),
-            title: Text(choice),
-            value: 5 * pollProvider.questions.indexOf(poll) +
-                poll.answers.indexOf(choice),
-            groupValue:
-                pollProvider.index[pollProvider.questions.indexOf(poll)],
-            onChanged:
-                pollProvider.disabled[pollProvider.questions.indexOf(poll)]
-                    ? null
-                    : (value) {
-                        pollProvider.increamentVote(choice, poll, value);
+            title: Text(option.optionText),
+            value: 0,
+            groupValue: 1,
+            onChanged: (value) {
+              0;
 
-                        // disabled[questions
-                        //         .indexOf(
-                        //             question)] =
-                        //     true;
-                      })),
+              // disabled[questions
+              //         .indexOf(
+              //             question)] =
+              //     true;
+            })),
         const Divider(
           height: 10,
         ),
@@ -103,7 +76,7 @@ class MyContainer extends StatelessWidget {
           child: Text("Comments",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         ),
-        ...poll.comment.map((com) => Padding(
+        ...poll.comments.map((com) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,9 +92,7 @@ class MyContainer extends StatelessWidget {
                   ),
                   IconButton(
                     icon: Icon(Icons.delete, color: Colors.red[800]),
-                    onPressed: () {
-                      pollProvider.removeComment(com, poll);
-                    },
+                    onPressed: () {},
                   )
                 ],
               ),
@@ -134,10 +105,7 @@ class MyContainer extends StatelessWidget {
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.send, color: Colors.blue),
                   onPressed: () {
-                    if (commentController.text != "") {
-                      pollProvider.addComment(commentController.text, poll);
-                      commentController.clear();
-                    }
+                    if (commentController.text != "") {}
                   },
                 ),
                 hintText: 'Write comment...'),

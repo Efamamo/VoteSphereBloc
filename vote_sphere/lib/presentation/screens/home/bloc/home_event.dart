@@ -12,3 +12,12 @@ class CreateGroup extends HomeEvent {
 
   CreateGroup({required this.groupName});
 }
+
+class NavigateToAddPollEvent extends HomeEvent {}
+
+class AddPoleEvent extends HomeEvent {
+  final question;
+  final options;
+
+  AddPoleEvent({required this.question, required this.options});
+}

@@ -18,9 +18,9 @@ class NoGroup extends StatelessWidget {
         });
   }
 
-  final HomeBloc homeBloc = HomeBloc();
   @override
   Widget build(BuildContext context) {
+    final homeBloc = BlocProvider.of<HomeBloc>(context);
     return BlocConsumer<HomeBloc, HomeState>(
       bloc: homeBloc,
       listenWhen: (previous, current) => current is HomeActionState,

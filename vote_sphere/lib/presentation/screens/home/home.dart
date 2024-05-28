@@ -19,13 +19,14 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    final homeBloc = BlocProvider.of<HomeBloc>(context);
     super.initState();
     homeBloc.add(LoadHomeEvent());
   }
 
-  HomeBloc homeBloc = HomeBloc();
   @override
   Widget build(BuildContext context) {
+    final homeBloc = BlocProvider.of<HomeBloc>(context);
     return BlocConsumer<HomeBloc, HomeState>(
         bloc: homeBloc,
         listenWhen: (previous, current) => current is HomeActionState,
@@ -91,6 +92,8 @@ class _HomeState extends State<Home> {
                       child: NoPoll(
                     role: pollState.role,
                   )));
+            } else {
+              return MyPolls(polls: pollState.polls);
             }
           }
           return Container(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
 import '../widgets/textfield.dart';
 import '../../application/home/pole_provider.dart';
 import 'package:provider/provider.dart';
 import 'questions_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NewPolls extends StatelessWidget {
   NewPolls({
@@ -25,7 +27,36 @@ class NewPolls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var pollProvider = Provider.of<PollProvider>(context);
+    List answers() {
+      List<String> answer = [];
+
+      if (choice1.text != '') {
+        answer.add(choice1.text);
+      }
+      if (choice2.text != '') {
+        answer.add(choice2.text);
+      }
+      if (choice3.text != '') {
+        answer.add(choice3.text);
+      }
+      if (choice4.text != '') {
+        answer.add(choice4.text);
+      }
+      if (choice5.text != '') {
+        answer.add(choice5.text);
+      }
+
+      choice1.clear();
+      choice2.clear();
+      choice3.clear();
+      choice4.clear();
+      choice5.clear();
+      question.clear();
+      return answer;
+    }
+
+    final homeBloc = BlocProvider.of<HomeBloc>(context);
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 2, 34, 82),
@@ -184,65 +215,9 @@ class NewPolls extends StatelessWidget {
                               foregroundColor: Colors.white,
                             ),
                             onPressed: () {
-                              if (question.text == '' ||
-                                  choice1.text == '' ||
-                                  choice2.text == '' ||
-                                  choice3.text == '') {
-                                questionError =
-                                    'Please Enter the question and atleast 3 choices';
-                              } else {
-                                pollProvider.addVote([]);
-                                List<String> answer = [];
-
-                                if (choice1.text != '') {
-                                  answer.add(choice1.text);
-                                  pollProvider
-                                      .votes[pollProvider.votes.length - 1]
-                                      .add(0);
-                                }
-                                if (choice2.text != '') {
-                                  answer.add(choice2.text);
-                                  pollProvider
-                                      .votes[pollProvider.votes.length - 1]
-                                      .add(0);
-                                }
-                                if (choice3.text != '') {
-                                  answer.add(choice3.text);
-                                  pollProvider
-                                      .votes[pollProvider.votes.length - 1]
-                                      .add(0);
-                                }
-                                if (choice4.text != '') {
-                                  answer.add(choice4.text);
-                                  pollProvider
-                                      .votes[pollProvider.votes.length - 1]
-                                      .add(0);
-                                }
-                                if (choice5.text != '') {
-                                  answer.add(choice5.text);
-                                  pollProvider
-                                      .votes[pollProvider.votes.length - 1]
-                                      .add(0);
-                                }
-                                pollProvider.addIndex(double.infinity);
-                                pollProvider.addDisable(false);
-
-                                Question current = Question(
-                                    question: question.text,
-                                    answers: answer,
-                                    comment: []);
-                                pollProvider.addquestions(current);
-
-                                questionError = '';
-
-                                choice1.clear();
-                                choice2.clear();
-                                choice3.clear();
-                                choice4.clear();
-                                choice5.clear();
-                                question.clear();
-                                Navigator.pop(context);
-                              }
+                              Navigator.pop(context);
+                              homeBloc.add(AddPoleEvent(
+                                  question: question.text, options: answers()));
                             },
                             child: const Text('Add Pole'),
                           ),

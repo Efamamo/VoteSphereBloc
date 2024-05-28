@@ -14,6 +14,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<LoadHomeEvent>(loadHomeEvent);
     on<OpenDialogToCreateGroup>(openDialogToCreateGroup);
     on<CreateGroup>(createGroup);
+    on<NavigateToAddPollEvent>(navigateToAddPollEvent);
+    on<AddPoleEvent>(addPoleEvent);
   }
 
   FutureOr<void> loadHomeEvent(
@@ -38,6 +40,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final res =
           await http.get(url, headers: {'Authorization': 'Bearer $token'});
       final jsonBody = jsonDecode(res.body);
+      print(res.statusCode);
 
       if (res.statusCode != 400) {
         final polls = jsonBody;
@@ -77,8 +80,40 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final res = await http.post(url, headers: headers, body: jsonBody);
     Map response = jsonDecode(res.body);
 
-    await secureStorage.write(key: 'group', value: response["groupId"]);
-
+    await secureStorage.write(key: 'group', value: response["groupID"]);
     add(LoadHomeEvent());
+  }
+
+  FutureOr<void> navigateToAddPollEvent(
+      NavigateToAddPollEvent event, Emitter<HomeState> emit) {
+    emit(NavigateToAddPoles());
+  }
+
+  FutureOr<void> addPoleEvent(
+      AddPoleEvent event, Emitter<HomeState> emit) async {
+    final secureStorage = SecureStorage().secureStorage;
+    final group = await secureStorage.read(key: 'group');
+    final token = await secureStorage.read(key: 'token');
+
+    String uri = 'http://localhost:9000/polls';
+    final url = Uri.parse(uri);
+    final body = {
+      "poll": {"question": event.question, "options": event.options},
+      "groupID": group
+    };
+
+    final jsonBody = jsonEncode(body);
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token'
+    };
+
+    final res = await http.post(url, headers: headers, body: jsonBody);
+
+    if (res.statusCode == 201) {
+      add(LoadHomeEvent());
+    }
+
+    print(res.body);
   }
 }

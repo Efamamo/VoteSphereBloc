@@ -5,12 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class MyAlertDialog extends StatelessWidget {
   MyAlertDialog({super.key});
   final TextEditingController groupName = TextEditingController();
-  final HomeBloc homeBLoc = HomeBloc();
 
   @override
   Widget build(BuildContext context) {
+    final homeBloc = BlocProvider.of<HomeBloc>(context);
     return BlocConsumer<HomeBloc, HomeState>(
-      bloc: homeBLoc,
+      bloc: homeBloc,
       listenWhen: (previous, current) => current is HomeActionState,
       buildWhen: (previous, current) => current is! HomeActionState,
       listener: (context, state) {
@@ -36,7 +36,7 @@ class MyAlertDialog extends StatelessWidget {
               onPressed: () {
                 if (groupName.text != '') {
                   Navigator.pop(context);
-                  homeBLoc.add(CreateGroup(groupName: groupName.text));
+                  homeBloc.add(CreateGroup(groupName: groupName.text));
                 }
               },
               child: const Text(

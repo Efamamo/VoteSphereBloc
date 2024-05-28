@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
 import 'presentation/screens/landing/landing_page.dart';
 import 'presentation/screens/home/home.dart';
 import 'presentation/screens/auth/login.dart';
@@ -8,14 +9,20 @@ import 'presentation/screens/member.dart';
 import 'package:provider/provider.dart';
 import 'application/home/group_provider.dart';
 import 'application/home/pole_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
-  runApp(
-    MultiProvider(child: const MyApp(), providers: [
-      ChangeNotifierProvider(create: (_) => GroupProvider()),
-      ChangeNotifierProvider(create: (_) => PollProvider()),
-    ]),
-  );
+  runApp(MultiProvider(
+    providers: [
+      BlocProvider(
+        create: (context) => HomeBloc(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => PollProvider(),
+      ),
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
