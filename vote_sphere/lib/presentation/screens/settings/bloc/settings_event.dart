@@ -11,3 +11,5 @@ class ChangePaswordEvent extends SettingsEvent {
   final newPassword;
   ChangePaswordEvent({required this.newPassword});
 }
+
+class DeleteAccountEvent extends SettingsEvent {}

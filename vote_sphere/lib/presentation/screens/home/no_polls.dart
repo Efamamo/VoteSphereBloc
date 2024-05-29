@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
 import '../new_polls.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import '../new_poll_model.dart';
 
 class NoPoll extends StatefulWidget {
   NoPoll({super.key, required this.role});
@@ -27,17 +29,16 @@ class _NoPollState extends State<NoPoll> {
   String questionError = '';
 
   void navigateNewPolls() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return NewPolls(
-        question: question,
-        questionError: questionError,
-        choice1: choice1,
-        choice2: choice2,
-        choice3: choice3,
-        choice4: choice4,
-        choice5: choice5,
-      );
-    }));
+    context.go('/newpolls',
+        extra: NewPollsData(
+          question: question,
+          choice1: choice1,
+          choice2: choice2,
+          choice3: choice3,
+          choice4: choice4,
+          choice5: choice5,
+          questionError: questionError,
+        ));
   }
 
   @override

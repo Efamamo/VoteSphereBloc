@@ -24,3 +24,5 @@ class SignupError extends AuthActionState {
   final String error;
   SignupError({required this.error});
 }
+
+class SignoutState extends AuthActionState {}

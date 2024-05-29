@@ -14,6 +14,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogInEvent>(logInEvent);
     on<NavigateToLoginEvent>(navigateToLoginEvent);
     on<SignupUserEvent>(signupUserEvent);
+    on<SignoutEvent>(signoutEvent);
   }
 
   FutureOr<void> signUpEvent(
@@ -31,6 +32,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final res = await http.post(url, headers: headers, body: jsonBody);
     Map response = jsonDecode(res.body);
+    print(response);
     if (response.containsKey('message')) {
       var error = response["message"];
 
@@ -87,5 +89,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       emit(SignUpSuccessState());
     }
+  }
+
+  FutureOr<void> signoutEvent(
+      SignoutEvent event, Emitter<AuthState> emit) async {
+    final secureStorage = SecureStorage().secureStorage;
+    await secureStorage.deleteAll();
+
+    emit(SignoutState());
   }
 }

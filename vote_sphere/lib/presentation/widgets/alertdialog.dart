@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class MyAlertDialog extends StatelessWidget {
   MyAlertDialog({super.key});
@@ -13,11 +14,7 @@ class MyAlertDialog extends StatelessWidget {
       bloc: homeBloc,
       listenWhen: (previous, current) => current is HomeActionState,
       buildWhen: (previous, current) => current is! HomeActionState,
-      listener: (context, state) {
-        if (state is CreateGroupState) {
-          Navigator.pop(context);
-        }
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return AlertDialog(
           backgroundColor: Colors.grey[200],
@@ -35,7 +32,7 @@ class MyAlertDialog extends StatelessWidget {
             TextButton(
               onPressed: () {
                 if (groupName.text != '') {
-                  Navigator.pop(context);
+                  GoRouter.of(context).pop();
                   homeBloc.add(CreateGroup(groupName: groupName.text));
                 }
               },

@@ -15,6 +15,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<LoadSettingEvent>(loadSettingEvent);
     on<NavigateToChangePasswordEvent>(navigateToChangePasswordEvent);
     on<ChangePaswordEvent>(changePaswordEvent);
+    on<DeleteAccountEvent>(deleteAccountEvent);
   }
 
   FutureOr<void> loadSettingEvent(
@@ -52,5 +53,20 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     } else {
       emit(ChangePasswordErrorState());
     }
+  }
+
+  FutureOr<void> deleteAccountEvent(
+      DeleteAccountEvent event, Emitter<SettingsState> emit) async {
+    final secureStorage = SecureStorage().secureStorage;
+    final token = await secureStorage.read(key: 'token');
+    String uri = 'http://localhost:9000/auth/deleteAccount';
+    final url = Uri.parse(uri);
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token'
+    };
+    final res = await http.delete(url, headers: headers);
+    print(res.body);
+    await secureStorage.deleteAll();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vote_sphere/presentation/screens/settings/bloc/settings_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class Settings extends StatefulWidget {
   const Settings();
@@ -53,7 +54,7 @@ class _SettingsState extends State<Settings> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  GoRouter.of(context).pop();
                   settingsBloc
                       .add(ChangePaswordEvent(newPassword: newPassword.text));
                 },
@@ -162,7 +163,10 @@ class _SettingsState extends State<Settings> {
                                     borderRadius: BorderRadius.circular(5)),
                                 backgroundColor: Colors.red[600],
                                 foregroundColor: Colors.white),
-                            onPressed: () {},
+                            onPressed: () {
+                              context.go('/');
+                              settingsBloc.add(DeleteAccountEvent());
+                            },
                             child: Text("DeleteAccount")),
                       ],
                     )

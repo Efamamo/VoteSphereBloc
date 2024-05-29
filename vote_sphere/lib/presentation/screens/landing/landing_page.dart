@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vote_sphere/presentation/screens/landing/bloc/landing_bloc.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:go_router/go_router.dart';
 
 class LandingPage extends StatelessWidget {
   LandingPage({super.key});
@@ -14,9 +15,9 @@ class LandingPage extends StatelessWidget {
       buildWhen: (previous, current) => current is! LandingActionState,
       listener: (context, state) {
         if (state is LandingNavigateToLogin) {
-          Navigator.pushNamed(context, 'login');
+          context.go('/login');
         } else if (state is LandingNavigateToSignup) {
-          Navigator.pushNamed(context, "signUp");
+          context.go('/signup');
         }
       },
       builder: (context, state) {

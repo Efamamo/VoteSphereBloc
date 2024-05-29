@@ -4,6 +4,7 @@ import 'package:vote_sphere/presentation/screens/auth/bloc/auth_bloc.dart';
 import '../../../Utils/extensions.dart';
 import '../../widgets/forms.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatefulWidget {
   final AuthBloc landingBloc = AuthBloc();
@@ -32,10 +33,11 @@ class _LoginPageState extends State<LoginPage> {
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
         if (state is LogInSuccessState) {
-          Navigator.pushNamed(context, "home");
+          print(state);
+          context.goNamed('home');
         }
         if (state is LoginNavigateToSignupState) {
-          Navigator.pushNamed(context, "signUp");
+          context.go('/signup');
         }
       },
       builder: (context, state) {
@@ -53,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
               backgroundColor: Colors.white,
               leading: IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  GoRouter.of(context).pop();
                 },
                 icon: const Icon(
                   Icons.arrow_back_ios,
@@ -143,6 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                                 height: 60,
                                 color: Colors.lightBlue,
                                 onPressed: () {
+                                  print("hello");
                                   authBloc.add(LogInEvent(
                                       username: usernameController.text,
                                       password: passwordController.text));

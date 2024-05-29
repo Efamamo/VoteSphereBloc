@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
 import '../widgets/textfield.dart';
 import '../../application/home/pole_provider.dart';
@@ -214,7 +215,7 @@ class NewPolls extends StatelessWidget {
                               foregroundColor: Colors.white,
                             ),
                             onPressed: () {
-                              Navigator.pop(context);
+                              GoRouter.of(context).pop();
                               homeBloc.add(AddPoleEvent(
                                   question: question.text, options: answers()));
                             },

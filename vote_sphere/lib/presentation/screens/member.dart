@@ -31,7 +31,7 @@ class MemberPage extends StatefulWidget {
 
 class _MemberPageState extends State<MemberPage> {
   TextEditingController _usernameController = TextEditingController();
-  List<String> _members = [];
+
   @override
   void initState() {
     final homeBloc = BlocProvider.of<HomeBloc>(context);
@@ -60,7 +60,7 @@ class _MemberPageState extends State<MemberPage> {
           }
           if (state is MembersLoadedState) {
             final memberstate = state as MembersLoadedState;
-            print(memberstate.members);
+
             return Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: 10.0), // Added x-direction padding
@@ -170,8 +170,8 @@ class _MemberPageState extends State<MemberPage> {
                       itemCount: memberstate.members.length,
                       itemBuilder: (context, index) {
                         return MemberListItem(
-                          member: memberstate.members[index],
-                        );
+                            member: memberstate.members[index],
+                            role: memberstate.role);
                       },
                     ),
                   ),
@@ -186,8 +186,10 @@ class _MemberPageState extends State<MemberPage> {
 
 class MemberListItem extends StatelessWidget {
   final member;
+  final role;
 
-  const MemberListItem({Key? key, required this.member}) : super(key: key);
+  const MemberListItem({Key? key, required this.member, required this.role})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +212,7 @@ class MemberListItem extends StatelessWidget {
                       style: TextStyle(fontSize: 16, color: Colors.black)),
                 ],
               ),
-              member["isAdmin"]
+              role == "Admin"
                   ? IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {

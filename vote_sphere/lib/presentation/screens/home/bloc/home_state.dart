@@ -7,6 +7,8 @@ final class HomeInitial extends HomeState {}
 
 abstract class HomeActionState extends HomeState {}
 
+class LogOutState extends HomeActionState {}
+
 class NoGroupState extends HomeState {
   final group;
   final username;

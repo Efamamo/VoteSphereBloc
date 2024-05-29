@@ -37,7 +37,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final username = await secureStorage.read(key: 'username');
     final token = await secureStorage.read(key: 'token');
 
-    print("group is $group");
+    if (token == null) {
+      emit(LogOutState());
+    }
 
     if (group == null) {
       emit(NoGroupState(

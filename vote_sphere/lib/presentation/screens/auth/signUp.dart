@@ -4,6 +4,7 @@ import 'package:vote_sphere/presentation/screens/auth/bloc/auth_bloc.dart';
 import '../../../Utils/extensions.dart';
 import '../../widgets/forms.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -29,9 +30,9 @@ class _SignUpPageState extends State<SignUpPage> {
       buildWhen: (previous, current) => current is! AuthActionState,
       listener: (context, state) {
         if (state is SignupNavigateToLoginState) {
-          Navigator.pushNamed(context, 'login');
+          context.go('/login');
         } else if (state is SignUpSuccessState) {
-          Navigator.pushNamed(context, 'home');
+          context.goNamed('home');
         } else if (state is SignupError) {
           print(state.error);
           final snackBar = SnackBar(
@@ -56,7 +57,7 @@ class _SignUpPageState extends State<SignUpPage> {
               backgroundColor: Colors.white,
               leading: IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  GoRouter.of(context).pop();
                 },
                 icon: const Icon(
                   Icons.arrow_back_ios,

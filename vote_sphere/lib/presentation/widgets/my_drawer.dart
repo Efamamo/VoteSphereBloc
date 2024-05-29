@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vote_sphere/presentation/screens/auth/bloc/auth_bloc.dart';
 import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
-import '../../application/home/group_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key, required this.group});
@@ -12,17 +12,18 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeBloc = BlocProvider.of<HomeBloc>(context);
+    final authBloc = BlocProvider.of<AuthBloc>(context);
     return BlocConsumer<HomeBloc, HomeState>(
       bloc: homeBloc,
       listenWhen: (previous, current) => current is HomeActionState,
       buildWhen: (previous, current) => current is! HomeActionState,
       listener: (context, state) {
         if (state is NavigateToSettingState) {
-          Navigator.pushNamed(context, 'settings');
+          context.go('/settings');
         }
 
         if (state is NavigateToMembersState) {
-          Navigator.pushNamed(context, 'members');
+          context.go('/members');
         }
       },
       builder: (context, state) {
@@ -95,7 +96,10 @@ class MyDrawer extends StatelessWidget {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    context.go('/');
+                    authBloc.add(SignoutEvent());
+                  },
                   child: const Row(
                     children: [
                       Icon(Icons.logout),
