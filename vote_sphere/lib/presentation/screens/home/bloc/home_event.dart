@@ -21,3 +21,10 @@ class AddPoleEvent extends HomeEvent {
 
   AddPoleEvent({required this.question, required this.options});
 }
+
+class DeletePollEvent extends HomeEvent {
+  final pollId;
+  DeletePollEvent({required this.pollId});
+}
+
+class NavigateToSettings extends HomeEvent {}

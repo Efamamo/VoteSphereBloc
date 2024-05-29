@@ -44,6 +44,7 @@ class _NoPollState extends State<NoPoll> {
   Widget build(BuildContext context) {
     final homeBloc = BlocProvider.of<HomeBloc>(context);
     return BlocConsumer<HomeBloc, HomeState>(
+      bloc: homeBloc,
       listenWhen: (previous, current) => current is HomeActionState,
       buildWhen: (previous, current) => current is! HomeActionState,
       listener: (context, state) {

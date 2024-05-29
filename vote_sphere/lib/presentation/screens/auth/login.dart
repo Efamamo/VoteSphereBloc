@@ -101,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                                       child: Column(children: <Widget>[
                                         CustomForm(
                                             controller: usernameController,
-                                            hintText: "Email",
+                                            hintText: "Username",
                                             validator: (val) {
                                               if (!val!.isValidEmail) {
                                                 return "Please enter the valid email";

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
+import 'package:vote_sphere/presentation/screens/settings/bloc/settings_bloc.dart';
 import 'presentation/screens/landing/landing_page.dart';
 import 'presentation/screens/home/home.dart';
 import 'presentation/screens/auth/login.dart';
-import 'presentation/screens/settings.dart';
+import 'presentation/screens/settings/settings.dart';
 import 'presentation/screens/auth/signUp.dart';
 import 'presentation/screens/member.dart';
 import 'package:provider/provider.dart';
@@ -17,11 +18,11 @@ void main() {
       BlocProvider(
         create: (context) => HomeBloc(),
       ),
-      ChangeNotifierProvider(
-        create: (context) => PollProvider(),
+      BlocProvider(
+        create: (context) => SettingsBloc(),
       ),
     ],
-    child: MyApp(),
+    child: const MyApp(),
   ));
 }
 

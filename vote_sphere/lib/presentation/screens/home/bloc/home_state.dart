@@ -66,3 +66,5 @@ class CreateGroupState extends HomeState {
 }
 
 class NavigateToAddPoles extends HomeActionState {}
+
+class NavigateToSettingState extends HomeActionState {}

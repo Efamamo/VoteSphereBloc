@@ -3,7 +3,6 @@ import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
 import '../widgets/textfield.dart';
 import '../../application/home/pole_provider.dart';
 import 'package:provider/provider.dart';
-import 'questions_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NewPolls extends StatelessWidget {

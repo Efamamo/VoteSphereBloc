@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
-import '../questions_model.dart';
 import '../../widgets/my_container.dart';
 import '../new_polls.dart';
 
 class MyPolls extends StatefulWidget {
   MyPolls({super.key, required this.polls});
-  List<Question> polls;
+  List polls;
 
   @override
   State<MyPolls> createState() => _MyPollsState();

@@ -37,22 +37,9 @@ class _HomeState extends State<Home> {
         builder: (context, state) {
           print(state);
           if (state is LoadingState) {
-            return Scaffold(
-                appBar: AppBar(
-                  backgroundColor: const Color.fromARGB(255, 2, 34, 82),
-                  title: const Text(
-                    "VOTESPHERE",
-                    style: TextStyle(color: Colors.white, letterSpacing: 2.0),
-                  ),
-                  iconTheme: const IconThemeData(
-                    color: Colors.white,
-                  ),
-                  centerTitle: true,
-                ),
-                drawer: const MyDrawer(),
-                body: const Center(
-                  child: CircularProgressIndicator(),
-                ));
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           } else if (state is NoGroupState) {
             final noGroup = state as NoGroupState;
             return Scaffold(
@@ -67,7 +54,7 @@ class _HomeState extends State<Home> {
                   ),
                   centerTitle: true,
                 ),
-                drawer: const MyDrawer(),
+                drawer: const MyDrawer(group: null),
                 body: NoGroup(
                   role: noGroup.role,
                 ));
@@ -87,13 +74,28 @@ class _HomeState extends State<Home> {
                     ),
                     centerTitle: true,
                   ),
-                  drawer: const MyDrawer(),
+                  drawer: MyDrawer(group: pollState.group),
                   body: Center(
                       child: NoPoll(
                     role: pollState.role,
                   )));
             } else {
-              return MyPolls(polls: pollState.polls);
+              return Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: const Color.fromARGB(255, 2, 34, 82),
+                    title: const Text(
+                      "VOTESPHERE",
+                      style: TextStyle(color: Colors.white, letterSpacing: 2.0),
+                    ),
+                    iconTheme: const IconThemeData(
+                      color: Colors.white,
+                    ),
+                    centerTitle: true,
+                  ),
+                  drawer: MyDrawer(
+                    group: pollState.group,
+                  ),
+                  body: Center(child: MyPolls(polls: pollState.polls)));
             }
           }
           return Container(

@@ -16,6 +16,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<CreateGroup>(createGroup);
     on<NavigateToAddPollEvent>(navigateToAddPollEvent);
     on<AddPoleEvent>(addPoleEvent);
+    on<DeletePollEvent>(deletePollEvent);
+    on<NavigateToSettings>(navigateToSettings);
   }
 
   FutureOr<void> loadHomeEvent(
@@ -115,5 +117,26 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
 
     print(res.body);
+  }
+
+  FutureOr<void> deletePollEvent(
+      DeletePollEvent event, Emitter<HomeState> emit) async {
+    final secureStorage = SecureStorage().secureStorage;
+    final token = await secureStorage.read(key: 'token');
+
+    String uri = 'http://localhost:9000/polls/${event.pollId}';
+    final url = Uri.parse(uri);
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token'
+    };
+
+    final res = await http.delete(url, headers: headers);
+    add(LoadHomeEvent());
+  }
+
+  FutureOr<void> navigateToSettings(
+      NavigateToSettings event, Emitter<HomeState> emit) {
+    emit(NavigateToSettingState());
   }
 }
