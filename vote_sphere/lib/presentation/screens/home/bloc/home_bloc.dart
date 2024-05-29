@@ -18,6 +18,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<AddPoleEvent>(addPoleEvent);
     on<DeletePollEvent>(deletePollEvent);
     on<NavigateToSettings>(navigateToSettings);
+    on<VoteEvent>(voteEvent);
+    on<SendCommentEvent>(sendCommentEvent);
+    on<DeleteComment>(deleteComment);
+    on<NavigateToMembersEvent>(navigateToMembersEvent);
+    on<LoadMembersEvent>(loadMembersEvent);
+    on<AddMemberEvent>(addMemberEvent);
+    on<DeleteMemberEvent>(deleteMemberEvent);
   }
 
   FutureOr<void> loadHomeEvent(
@@ -132,11 +139,156 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     };
 
     final res = await http.delete(url, headers: headers);
-    add(LoadHomeEvent());
+    final jsonBody = jsonDecode(res.body);
+    if (res.statusCode != 204) {
+      emit(DeletePollErrorState(error: jsonBody['message']));
+    } else {
+      add(LoadHomeEvent());
+    }
   }
 
   FutureOr<void> navigateToSettings(
       NavigateToSettings event, Emitter<HomeState> emit) {
     emit(NavigateToSettingState());
+  }
+
+  FutureOr<void> voteEvent(VoteEvent event, Emitter<HomeState> emit) async {
+    final secureStorage = SecureStorage().secureStorage;
+    final token = await secureStorage.read(key: 'token');
+    String uri =
+        'http://localhost:9000/polls/${event.pollId}/vote?optionId=${event.optionId}';
+    final url = Uri.parse(uri);
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token'
+    };
+
+    final res = await http.patch(url, headers: headers);
+    final decodedRes = jsonDecode(res.body);
+    if (res.statusCode == 200) {
+      add(LoadHomeEvent());
+    } else {
+      emit(VoteError(error: decodedRes["message"]));
+    }
+    print(res.body);
+  }
+
+  FutureOr<void> sendCommentEvent(
+      SendCommentEvent event, Emitter<HomeState> emit) async {
+    final secureStorage = SecureStorage().secureStorage;
+    final token = await secureStorage.read(key: 'token');
+    String uri = 'http://localhost:9000/polls/comments';
+    final url = Uri.parse(uri);
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token'
+    };
+
+    final body = {"pollId": event.pollID, "commentText": event.comment};
+    final jsonBody = jsonEncode(body);
+    final res = await http.post(url, headers: headers, body: jsonBody);
+    print(res.body);
+
+    add(LoadHomeEvent());
+  }
+
+  FutureOr<void> deleteComment(
+      DeleteComment event, Emitter<HomeState> emit) async {
+    final secureStorage = SecureStorage().secureStorage;
+    final token = await secureStorage.read(key: 'token');
+    String uri = 'http://localhost:9000/polls/comments/${event.comId}';
+    final url = Uri.parse(uri);
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token'
+    };
+
+    final res = await http.delete(url, headers: headers);
+    final jsonBody = jsonDecode(res.body);
+    if (res.statusCode == 200) {
+      add(LoadHomeEvent());
+    } else {
+      emit(DeletePollErrorState(error: jsonBody['message']));
+    }
+  }
+
+  FutureOr<void> navigateToMembersEvent(
+      NavigateToMembersEvent event, Emitter<HomeState> emit) {
+    emit(NavigateToMembersState());
+  }
+
+  FutureOr<void> loadMembersEvent(
+      LoadMembersEvent event, Emitter<HomeState> emit) async {
+    emit(MembersLoadingState());
+
+    final secureStorage = SecureStorage().secureStorage;
+
+    final token = await secureStorage.read(key: 'token');
+    final group = await secureStorage.read(key: 'group');
+    final role = await secureStorage.read(key: 'role');
+
+    String uri = 'http://localhost:9000/groups/${group}/members';
+    final url = Uri.parse(uri);
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token'
+    };
+
+    final res = await http.get(url, headers: headers);
+
+    print(res.body);
+    if (res.statusCode == 200) {
+      final decodedody = jsonDecode(res.body);
+      emit(MembersLoadedState(members: decodedody, role: role));
+    }
+  }
+
+  FutureOr<void> addMemberEvent(
+      AddMemberEvent event, Emitter<HomeState> emit) async {
+    final secureStorage = SecureStorage().secureStorage;
+
+    final token = await secureStorage.read(key: 'token');
+    final group = await secureStorage.read(key: 'group');
+
+    String uri = 'http://localhost:9000/groups/${group}/members';
+
+    final body = {"username": event.username};
+    final encodedBody = jsonEncode(body);
+    final url = Uri.parse(uri);
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token'
+    };
+
+    final res = await http.post(url, headers: headers, body: encodedBody);
+    final decodedRes = jsonDecode(res.body);
+    if (res.statusCode == 201) {
+      add(LoadMembersEvent());
+    } else {
+      emit(AddMemberErrorState(error: decodedRes["message"]));
+    }
+  }
+
+  FutureOr<void> deleteMemberEvent(
+      DeleteMemberEvent event, Emitter<HomeState> emit) async {
+    final secureStorage = SecureStorage().secureStorage;
+
+    final token = await secureStorage.read(key: 'token');
+    final group = await secureStorage.read(key: 'group');
+
+    String uri = 'http://localhost:9000/groups/${group}/members';
+
+    final body = {"username": event.username};
+    final encodedBody = jsonEncode(body);
+    final url = Uri.parse(uri);
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token'
+    };
+
+    final res = await http.delete(url, headers: headers, body: encodedBody);
+
+    print(res.body);
+    add(LoadMembersEvent());
   }
 }

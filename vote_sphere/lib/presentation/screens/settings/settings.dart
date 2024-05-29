@@ -29,12 +29,26 @@ class _SettingsState extends State<Settings> {
               "Update Username",
               style: TextStyle(color: Colors.black),
             ),
-            content: TextField(
-              controller: newPassword,
-              obscureText: true,
-              decoration: const InputDecoration(
-                  hintText: 'Enter Username',
-                  hintStyle: TextStyle(color: Colors.black)),
+            content: Container(
+              height: 150,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: newPassword,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                        hintText: 'Enter old Password',
+                        hintStyle: TextStyle(color: Colors.black)),
+                  ),
+                  TextField(
+                    controller: newPassword,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                        hintText: 'Enter new Password',
+                        hintStyle: TextStyle(color: Colors.black)),
+                  ),
+                ],
+              ),
             ),
             actions: [
               TextButton(
@@ -96,7 +110,7 @@ class _SettingsState extends State<Settings> {
                 centerTitle: true,
               ),
               body: Container(
-                margin: EdgeInsets.all(30),
+                margin: const EdgeInsets.all(30),
                 decoration: BoxDecoration(
                     color: const Color.fromARGB(255, 253, 250, 250),
                     border: Border.all(),
@@ -143,13 +157,13 @@ class _SettingsState extends State<Settings> {
                           width: 20,
                         ),
                         ElevatedButton(
-                            child: Text("DeleteAccount"),
                             style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5)),
                                 backgroundColor: Colors.red[600],
                                 foregroundColor: Colors.white),
-                            onPressed: () {}),
+                            onPressed: () {},
+                            child: Text("DeleteAccount")),
                       ],
                     )
                   ],

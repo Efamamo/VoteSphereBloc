@@ -68,3 +68,28 @@ class CreateGroupState extends HomeState {
 class NavigateToAddPoles extends HomeActionState {}
 
 class NavigateToSettingState extends HomeActionState {}
+
+class DeletePollErrorState extends HomeActionState {
+  final error;
+  DeletePollErrorState({required this.error});
+}
+
+class NavigateToMembersState extends HomeActionState {}
+
+class MembersLoadingState extends HomeState {}
+
+class MembersLoadedState extends HomeState {
+  final role;
+  final members;
+  MembersLoadedState({required this.members, required this.role});
+}
+
+class AddMemberErrorState extends HomeActionState {
+  final error;
+  AddMemberErrorState({required this.error});
+}
+
+class VoteError extends HomeActionState {
+  final error;
+  VoteError({required this.error});
+}

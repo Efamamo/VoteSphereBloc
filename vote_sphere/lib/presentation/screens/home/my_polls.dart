@@ -6,7 +6,7 @@ import '../new_polls.dart';
 
 class MyPolls extends StatefulWidget {
   MyPolls({super.key, required this.polls});
-  List polls;
+  final polls;
 
   @override
   State<MyPolls> createState() => _MyPollsState();

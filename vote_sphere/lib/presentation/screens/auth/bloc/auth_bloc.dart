@@ -71,7 +71,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final res = await http.post(url, headers: headers, body: jsonBody);
     Map response = jsonDecode(res.body);
-    if (response.containsKey('message')) {
+    if (res.statusCode != 201) {
       var error = response["message"];
 
       if (error is! String) {

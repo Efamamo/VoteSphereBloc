@@ -20,6 +20,10 @@ class MyDrawer extends StatelessWidget {
         if (state is NavigateToSettingState) {
           Navigator.pushNamed(context, 'settings');
         }
+
+        if (state is NavigateToMembersState) {
+          Navigator.pushNamed(context, 'members');
+        }
       },
       builder: (context, state) {
         return Drawer(
@@ -72,7 +76,7 @@ class MyDrawer extends StatelessWidget {
                     group != null
                         ? GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, 'members');
+                              homeBloc.add(NavigateToMembersEvent());
                             },
                             child: const Row(
                               children: [

@@ -28,3 +28,34 @@ class DeletePollEvent extends HomeEvent {
 }
 
 class NavigateToSettings extends HomeEvent {}
+
+class VoteEvent extends HomeEvent {
+  final pollId;
+  final optionId;
+  VoteEvent({required this.optionId, required this.pollId});
+}
+
+class SendCommentEvent extends HomeEvent {
+  final pollID;
+  final comment;
+  SendCommentEvent({required this.comment, required this.pollID});
+}
+
+class DeleteComment extends HomeEvent {
+  final comId;
+  DeleteComment({required this.comId});
+}
+
+class NavigateToMembersEvent extends HomeEvent {}
+
+class LoadMembersEvent extends HomeEvent {}
+
+class AddMemberEvent extends HomeEvent {
+  final username;
+  AddMemberEvent({required this.username});
+}
+
+class DeleteMemberEvent extends HomeEvent {
+  final username;
+  DeleteMemberEvent({required this.username});
+}

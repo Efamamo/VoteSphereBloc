@@ -32,7 +32,18 @@ class _HomeState extends State<Home> {
         listenWhen: (previous, current) => current is HomeActionState,
         buildWhen: (previous, current) => current is! HomeActionState,
         listener: (context, state) {
-          // TODO: implement listener
+          if (state is DeletePollErrorState) {
+            final snackBar = SnackBar(
+              content: Text(state.error),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+          if (state is VoteError) {
+            final snackBar = SnackBar(
+              content: Text(state.error),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
         },
         builder: (context, state) {
           print(state);
