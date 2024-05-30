@@ -47,7 +47,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     };
 
     final res = await http.patch(url, headers: headers, body: jsonBody);
-
+    print(res);
     if (res.statusCode == 200) {
       emit(ChangePasswordSuccessState());
     } else {

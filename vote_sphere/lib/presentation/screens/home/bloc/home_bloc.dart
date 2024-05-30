@@ -192,20 +192,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final decodedRes = jsonDecode(res.body);
 
     if (res.statusCode == 200) {
-      if (state is HomeWithPollState) {
-        final currentState = state as HomeWithPollState;
+      final currentState = state as HomeWithPollState;
 
-        // Find the poll and update it
-        final updatedPolls = currentState.polls.map((poll) {
-          if (poll['id'] == event.pollId) {
-            poll['options'] =
-                decodedRes['options']; // Assuming 'votes' is the updated data
-          }
-          return poll;
-        }).toList();
+      // Find the poll and update it
+      final updatedPolls = currentState.polls.map((poll) {
+        if (poll['id'] == event.pollId) {
+          poll['options'] =
+              decodedRes['options']; // Assuming 'votes' is the updated data
+        }
+        return poll;
+      }).toList();
 
-        emit(currentState.copyWith(polls: updatedPolls));
-      }
+      emit(currentState.copyWith(polls: updatedPolls));
     } else {
       emit(VoteError(error: decodedRes["message"]));
     }
@@ -226,21 +224,44 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final body = {"pollId": event.pollID, "commentText": event.comment};
     final jsonBody = jsonEncode(body);
     final res = await http.post(url, headers: headers, body: jsonBody);
-    final addedComment = jsonDecode(res.body);
 
-    final currentState = state as HomeWithPollState;
+    if (res.statusCode == 201) {
+      final addedComment = jsonDecode(res.body);
 
-    final updatedPolls = currentState.polls.map((poll) {
-      if (poll['id'] == event.pollID) {
-        poll['comments'].add({
-          "id": addedComment["id"],
-          "commentText": addedComment["commentText"]
-        });
+      if (state is HomeWithPollState) {
+        final currentState = state as HomeWithPollState;
+
+        // Update polls immutably
+        final updatedPolls = currentState.polls.map((poll) {
+          if (poll['id'] == event.pollID) {
+            // Initialize comments if they don't exist
+            final List comments =
+                poll['comments'] != null ? List.from(poll['comments']) : [];
+
+            // Add the new comment
+            comments.add({
+              "id": addedComment["id"],
+              "commentText": addedComment["commentText"]
+            });
+
+            // Return a new poll object with updated comments
+            return {
+              ...poll,
+              'comments': comments,
+            };
+          }
+          return poll;
+        }).toList();
+
+        emit(currentState.copyWith(polls: updatedPolls));
+      } else {
+        // Handle the case where the state is not HomeWithPollState
+        print('Current state is not HomeWithPollState');
       }
-      return poll;
-    }).toList();
-
-    emit(currentState.copyWith(polls: updatedPolls));
+    } else {
+      // Handle error if needed
+      print('Failed to add comment: ${res.statusCode}');
+    }
   }
 
   FutureOr<void> deleteComment(
@@ -258,20 +279,36 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final res = await http.delete(url, headers: headers);
 
     if (res.statusCode == 200) {
-      final currentState = state as HomeWithPollState;
+      if (state is HomeWithPollState) {
+        final currentState = state as HomeWithPollState;
 
-      final updatedPolls = currentState.polls.map((poll) {
-        if (poll['id'] == event.pollId) {
-          poll['comments']
-              .removeWhere((comment) => comment['id'] == event.comId);
-        }
-        return poll;
-      }).toList();
+        // Update polls immutably
+        final updatedPolls = currentState.polls.map((poll) {
+          if (poll['id'] == event.pollId) {
+            // Check if comments exist
+            if (poll['comments'] != null) {
+              // Create a new list without the deleted comment
+              final updatedComments = List.from(poll['comments'])
+                  .where((comment) => comment['id'] != event.comId)
+                  .toList();
 
-      emit(currentState.copyWith(polls: updatedPolls));
+              return {
+                ...poll,
+                'comments': updatedComments,
+              };
+            }
+          }
+          return poll;
+        }).toList();
+
+        emit(currentState.copyWith(polls: updatedPolls));
+      } else {
+        // Handle the case where the state is not HomeWithPollState
+        print('Current state is not HomeWithPollState');
+      }
     } else {
       final jsonBody = jsonDecode(res.body);
-      emit(DeletePollErrorState(error: jsonBody['message']));
+      emit(DeletePollErrorState(error: jsonBody['message'] ?? 'Unknown error'));
     }
   }
 
@@ -381,17 +418,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     final res = await http.delete(url, headers: headers, body: encodedBody);
 
-    if (res.statusCode >= 200 && res.statusCode < 300) {
-      final currentState = state as MembersLoadedState;
+    try {
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        final currentState = state as MembersLoadedState;
 
-      final updatedMembers = currentState.members
-          .removeWhere((member) => member['username'] == event.username);
+        final updatedMembers = currentState.members
+            .removeWhere((member) => member['username'] == event.username);
 
-      emit(currentState.copyWith(members: updatedMembers));
-    } else {
-      final jsonBody = jsonDecode(res.body);
-      emit(AddMemberErrorState(
-          error: jsonBody["message"] ?? 'Unknown error occurred'));
+        emit(currentState.copyWith(members: updatedMembers));
+      } else {
+        final jsonBody = jsonDecode(res.body);
+        emit(AddMemberErrorState(
+            error: jsonBody["message"] ?? 'Unknown error occurred'));
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }

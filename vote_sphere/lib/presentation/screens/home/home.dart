@@ -106,7 +106,11 @@ class _HomeState extends State<Home> {
                   drawer: MyDrawer(
                     group: pollState.group,
                   ),
-                  body: Center(child: MyPolls(polls: pollState.polls)));
+                  body: Center(
+                      child: MyPolls(
+                    polls: pollState.polls,
+                    role: pollState.role,
+                  )));
             }
           }
           return Container(

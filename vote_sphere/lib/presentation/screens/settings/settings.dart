@@ -24,6 +24,7 @@ class _SettingsState extends State<Settings> {
         builder: (context) {
           final settingsBloc = BlocProvider.of<SettingsBloc>(context);
           TextEditingController newPassword = TextEditingController();
+          TextEditingController oldPassword = TextEditingController();
           return AlertDialog(
             backgroundColor: Colors.grey[200],
             title: const Text(
@@ -35,7 +36,7 @@ class _SettingsState extends State<Settings> {
               child: Column(
                 children: [
                   TextField(
-                    controller: newPassword,
+                    controller: oldPassword,
                     obscureText: true,
                     decoration: const InputDecoration(
                         hintText: 'Enter old Password',

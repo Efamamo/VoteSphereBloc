@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
 
 class MyContainer extends StatelessWidget {
-  MyContainer({required this.poll});
+  MyContainer({required this.poll, required this.role});
   TextEditingController commentController = TextEditingController();
   var selected;
   var poll;
+  var role;
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +43,16 @@ class MyContainer extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 20,
                     )),
-                IconButton(
-                    onPressed: () {
-                      homeBloc.add(DeletePollEvent(pollId: pollId));
-                    },
-                    icon: Icon(
-                      Icons.delete,
-                      color: Colors.red[900],
-                    ))
+                role == "Admin"
+                    ? IconButton(
+                        onPressed: () {
+                          homeBloc.add(DeletePollEvent(pollId: pollId));
+                        },
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.red[900],
+                        ))
+                    : const SizedBox()
               ],
             ),
           ),

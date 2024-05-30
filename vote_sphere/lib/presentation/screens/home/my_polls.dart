@@ -6,8 +6,9 @@ import 'package:go_router/go_router.dart';
 import '../new_poll_model.dart';
 
 class MyPolls extends StatefulWidget {
-  MyPolls({super.key, required this.polls});
+  MyPolls({super.key, required this.polls, required this.role});
   final polls;
+  final role;
 
   @override
   State<MyPolls> createState() => _MyPollsState();
@@ -64,7 +65,8 @@ class _MyPollsState extends State<MyPolls> {
                     fontWeight: FontWeight.bold)),
             Column(
               children: [
-                ...widget.polls.map((poll) => MyContainer(poll: poll))
+                ...widget.polls
+                    .map((poll) => MyContainer(poll: poll, role: widget.role))
               ],
             ),
             const SizedBox(
@@ -73,14 +75,16 @@ class _MyPollsState extends State<MyPolls> {
             const SizedBox(
               height: 20,
             ),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5)),
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue[700]),
-                onPressed: navigateNewPolls,
-                child: const Text("Add Poll")),
+            widget.role == "Admin"
+                ? ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blue[700]),
+                    onPressed: navigateNewPolls,
+                    child: const Text("Add Poll"))
+                : const SizedBox(),
             const SizedBox(
               height: 50,
             )
