@@ -47,6 +47,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await secureStorage.write(key: "token", value: response["accessToken"]);
       await secureStorage.write(key: "username", value: response["username"]);
       await secureStorage.write(key: "group", value: response["groupID"]);
+      await secureStorage.write(key: "email", value: response["email"]);
 
       emit(LogInSuccessState());
     }
@@ -73,6 +74,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final res = await http.post(url, headers: headers, body: jsonBody);
     Map response = jsonDecode(res.body);
+    print(response);
     if (res.statusCode != 201) {
       var error = response["message"];
 
@@ -86,6 +88,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await secureStorage.write(key: "token", value: response["accessToken"]);
       await secureStorage.write(key: "username", value: response["username"]);
       await secureStorage.write(key: "group", value: response["groupID"]);
+      await secureStorage.write(key: "email", value: response["email"]);
 
       emit(SignUpSuccessState());
     }

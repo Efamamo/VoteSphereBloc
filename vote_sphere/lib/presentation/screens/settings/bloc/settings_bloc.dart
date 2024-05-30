@@ -24,8 +24,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
     final secureStorage = SecureStorage().secureStorage;
     final username = await secureStorage.read(key: 'username');
+    final email = await secureStorage.read(key: "email");
 
-    emit(SettingsLoadedState(username: username));
+    emit(SettingsLoadedState(username: username, email: email));
   }
 
   FutureOr<void> navigateToChangePasswordEvent(
@@ -39,7 +40,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     final url = Uri.parse(uri);
     final secureStorage = SecureStorage().secureStorage;
     final token = await secureStorage.read(key: 'token');
-    final body = {"newPassword": event.newPassword};
+    final body = {
+      "oldPassword": event.oldPassword,
+      "newPassword": event.newPassword
+    };
     final jsonBody = jsonEncode(body);
     final headers = {
       "Content-Type": "application/json",
@@ -47,11 +51,16 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     };
 
     final res = await http.patch(url, headers: headers, body: jsonBody);
-    print(res);
+    print(res.body);
     if (res.statusCode == 200) {
       emit(ChangePasswordSuccessState());
     } else {
-      emit(ChangePasswordErrorState());
+      final decodedBody = jsonDecode(res.body);
+      var error = decodedBody["message"];
+      if (decodedBody["message"] is! String) {
+        error = decodedBody["message"][0];
+      }
+      emit(ChangePasswordErrorState(error: error));
     }
   }
 

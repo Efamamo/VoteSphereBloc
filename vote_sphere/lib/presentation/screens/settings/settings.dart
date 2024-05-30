@@ -28,7 +28,7 @@ class _SettingsState extends State<Settings> {
           return AlertDialog(
             backgroundColor: Colors.grey[200],
             title: const Text(
-              "Update Username",
+              "Update Password",
               style: TextStyle(color: Colors.black),
             ),
             content: Container(
@@ -41,6 +41,9 @@ class _SettingsState extends State<Settings> {
                     decoration: const InputDecoration(
                         hintText: 'Enter old Password',
                         hintStyle: TextStyle(color: Colors.black)),
+                  ),
+                  SizedBox(
+                    height: 20,
                   ),
                   TextField(
                     controller: newPassword,
@@ -56,11 +59,12 @@ class _SettingsState extends State<Settings> {
               TextButton(
                 onPressed: () {
                   GoRouter.of(context).pop();
-                  settingsBloc
-                      .add(ChangePaswordEvent(newPassword: newPassword.text));
+                  settingsBloc.add(ChangePaswordEvent(
+                      newPassword: newPassword.text,
+                      oldPassword: oldPassword.text));
                 },
                 child: const Text(
-                  "Change Username",
+                  "Change Password",
                   style: TextStyle(color: Colors.black),
                 ),
               )
@@ -87,10 +91,18 @@ class _SettingsState extends State<Settings> {
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
         if (state is ChangePasswordErrorState) {
-          const snackBar = SnackBar(
-            content: Text("Password Change Failed"),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          if (state.error == "Invalid password" ||
+              state.error == "old password cannot be empty") {
+            const snackBar = SnackBar(
+              content: Text("Enter Correct Old Password"),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          } else {
+            const snackBar = SnackBar(
+              content: Text("New Password is not strong"),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
         }
       },
       builder: (context, state) {
@@ -126,18 +138,13 @@ class _SettingsState extends State<Settings> {
                     ),
                     ListTile(
                       leading: const Icon(Icons.person),
-                      title: Text(settingState.username.toString()),
-                      subtitle: const Text("username"),
+                      title: Text("username"),
+                      subtitle: Text(settingState.username.toString()),
                     ),
-                    const ListTile(
+                    ListTile(
                       leading: Icon(Icons.email),
-                      title: Text("e@gmail.com"),
-                      subtitle: Text("email"),
-                    ),
-                    const ListTile(
-                      leading: Icon(Icons.group),
-                      title: Text("group 1"),
-                      subtitle: Text("groupId"),
+                      title: Text("email"),
+                      subtitle: Text(settingState.email.toString()),
                     ),
                     const SizedBox(
                       height: 50,

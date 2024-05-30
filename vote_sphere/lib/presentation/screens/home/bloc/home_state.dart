@@ -14,12 +14,14 @@ class NoGroupState extends HomeState {
   final username;
   final token;
   final role;
+  final email;
 
   NoGroupState(
       {required this.group,
       required this.role,
       required this.token,
-      required this.username});
+      required this.username,
+      required this.email});
 }
 
 class NoPollState extends HomeState {
@@ -27,12 +29,14 @@ class NoPollState extends HomeState {
   final username;
   final token;
   final role;
+  final emial;
 
   NoPollState(
       {required this.group,
       required this.role,
       required this.token,
-      required this.username});
+      required this.username,
+      required this.emial});
 }
 
 class HomeWithPollState extends HomeState {
@@ -41,15 +45,18 @@ class HomeWithPollState extends HomeState {
   final token;
   final role;
   final polls;
+  final email;
 
   HomeWithPollState(
       {required this.group,
       required this.username,
       required this.polls,
       required this.role,
+      required this.email,
       required this.token});
   HomeWithPollState copyWith({List<dynamic>? polls}) {
     return HomeWithPollState(
+      email: this.email,
       group: this.group,
       username: this.username,
       polls: polls ?? this.polls,
@@ -68,12 +75,14 @@ class CreateGroupState extends HomeState {
   final username;
   final token;
   final role;
+  final email;
 
   CreateGroupState(
       {required this.group,
       required this.role,
       required this.token,
-      required this.username});
+      required this.username,
+      required this.email});
 }
 
 class NavigateToAddPoles extends HomeActionState {}

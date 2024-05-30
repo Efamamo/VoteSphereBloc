@@ -36,10 +36,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final role = await secureStorage.read(key: 'role');
     final username = await secureStorage.read(key: 'username');
     final token = await secureStorage.read(key: 'token');
+    final email = await secureStorage.read(key: "email");
 
     if (group == null) {
       emit(NoGroupState(
-          group: group, role: role, token: token, username: username));
+          group: group,
+          role: role,
+          token: token,
+          username: username,
+          email: email));
     } else {
       String uri = 'http://localhost:9000/polls?groupId=$group';
 
@@ -57,6 +62,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             username: username,
             polls: polls,
             role: role,
+            email: email,
             token: token));
       } else {
         print(res.body);
@@ -74,7 +80,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final username = await secureStorage.read(key: 'username');
     final token = await secureStorage.read(key: 'token');
     final role = await secureStorage.read(key: 'role');
-    final group = await secureStorage.read(key: 'group');
+
+    final email = await secureStorage.read(key: 'email');
 
     String uri = 'http://localhost:9000/groups';
     final url = Uri.parse(uri);
@@ -89,8 +96,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Map response = jsonDecode(res.body);
 
     await secureStorage.write(key: 'group', value: response["groupID"]);
+    final group = await secureStorage.read(key: 'group');
     if (res.statusCode >= 200 && res.statusCode < 300) {
-      add(LoadHomeEvent());
+      emit(HomeWithPollState(
+          group: group,
+          username: username,
+          polls: [],
+          role: role,
+          email: email,
+          token: token));
     }
   }
 
