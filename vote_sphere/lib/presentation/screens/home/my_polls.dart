@@ -29,28 +29,24 @@ class _MyPollsState extends State<MyPolls> {
   String questionError = '';
 
   void navigateNewPolls() {
-    context.go('/newpolls',
-        extra: NewPollsData(
-          question: question,
-          choice1: choice1,
-          choice2: choice2,
-          choice3: choice3,
-          choice4: choice4,
-          choice5: choice5,
-          questionError: questionError,
-        ));
+    context.push('/new_polls', extra: {
+      'question': question,
+      'choice1': choice1,
+      'choice2': choice2,
+      'choice3': choice3,
+      'choice4': choice4,
+      'choice5': choice5,
+      'questionError': '',
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final homeBloc = BlocProvider.of<HomeBloc>(context);
+    print(widget.polls);
     return BlocConsumer<HomeBloc, HomeState>(
       bloc: homeBloc,
-      listener: (context, state) {
-        if (state is NavigateToAddPoles) {
-          navigateNewPolls();
-        }
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return SingleChildScrollView(
           child: Column(children: [
@@ -83,9 +79,7 @@ class _MyPollsState extends State<MyPolls> {
                         borderRadius: BorderRadius.circular(5)),
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.blue[700]),
-                onPressed: () {
-                  homeBloc.add(NavigateToAddPollEvent());
-                },
+                onPressed: navigateNewPolls,
                 child: const Text("Add Poll")),
             const SizedBox(
               height: 50,

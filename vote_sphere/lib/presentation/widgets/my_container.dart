@@ -78,7 +78,6 @@ class MyContainer extends StatelessWidget {
                   groupValue: selected,
                   onChanged: (value) {
                     selected = value;
-
                     homeBloc
                         .add(VoteEvent(optionId: option['id'], pollId: pollId));
                   }))
@@ -110,7 +109,7 @@ class MyContainer extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.delete, color: Colors.red[800]),
                     onPressed: () {
-                      homeBloc.add(DeleteComment(comId: comId));
+                      homeBloc.add(DeleteComment(comId: comId, pollId: pollId));
                     },
                   )
                 ],

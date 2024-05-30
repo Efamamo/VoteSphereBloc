@@ -48,6 +48,15 @@ class HomeWithPollState extends HomeState {
       required this.polls,
       required this.role,
       required this.token});
+  HomeWithPollState copyWith({List<dynamic>? polls}) {
+    return HomeWithPollState(
+      group: this.group,
+      username: this.username,
+      polls: polls ?? this.polls,
+      role: this.role,
+      token: this.token,
+    );
+  }
 }
 
 class LoadingState extends HomeState {}
@@ -84,6 +93,12 @@ class MembersLoadedState extends HomeState {
   final role;
   final members;
   MembersLoadedState({required this.members, required this.role});
+  MembersLoadedState copyWith({List<dynamic>? members}) {
+    return MembersLoadedState(
+      role: this.role,
+      members: members ?? this.members,
+    );
+  }
 }
 
 class AddMemberErrorState extends HomeActionState {

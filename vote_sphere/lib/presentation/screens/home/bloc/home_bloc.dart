@@ -37,10 +37,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final username = await secureStorage.read(key: 'username');
     final token = await secureStorage.read(key: 'token');
 
-    if (token == null) {
-      emit(LogOutState());
-    }
-
     if (group == null) {
       emit(NoGroupState(
           group: group, role: role, token: token, username: username));
@@ -74,10 +70,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   FutureOr<void> createGroup(CreateGroup event, Emitter<HomeState> emit) async {
-    emit(LoadingState());
     final secureStorage = SecureStorage().secureStorage;
     final username = await secureStorage.read(key: 'username');
     final token = await secureStorage.read(key: 'token');
+    final role = await secureStorage.read(key: 'role');
+    final group = await secureStorage.read(key: 'group');
 
     String uri = 'http://localhost:9000/groups';
     final url = Uri.parse(uri);
@@ -92,7 +89,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Map response = jsonDecode(res.body);
 
     await secureStorage.write(key: 'group', value: response["groupID"]);
-    add(LoadHomeEvent());
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      add(LoadHomeEvent());
+    }
   }
 
   FutureOr<void> navigateToAddPollEvent(
@@ -102,30 +101,46 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   FutureOr<void> addPoleEvent(
       AddPoleEvent event, Emitter<HomeState> emit) async {
-    final secureStorage = SecureStorage().secureStorage;
-    final group = await secureStorage.read(key: 'group');
-    final token = await secureStorage.read(key: 'token');
+    try {
+      final secureStorage = SecureStorage().secureStorage;
+      final group = await secureStorage.read(key: 'group');
+      final token = await secureStorage.read(key: 'token');
 
-    String uri = 'http://localhost:9000/polls';
-    final url = Uri.parse(uri);
-    final body = {
-      "poll": {"question": event.question, "options": event.options},
-      "groupID": group
-    };
+      if (group == null || token == null) {
+        throw Exception("Missing group ID or token.");
+      }
 
-    final jsonBody = jsonEncode(body);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
+      String uri = 'http://localhost:9000/polls';
+      final url = Uri.parse(uri);
+      final body = {
+        "poll": {"question": event.question, "options": event.options},
+        "groupID": group
+      };
 
-    final res = await http.post(url, headers: headers, body: jsonBody);
+      final jsonBody = jsonEncode(body);
+      final headers = {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $token'
+      };
 
-    if (res.statusCode == 201) {
-      add(LoadHomeEvent());
+      final res = await http.post(url, headers: headers, body: jsonBody);
+      final decodedBody = jsonDecode(res.body);
+
+      if (res.statusCode == 201) {
+        final currentState = state as HomeWithPollState;
+        decodedBody['comments'] = [];
+        final updatedPolls = List<Map<String, dynamic>>.from(currentState.polls)
+          ..add(decodedBody);
+
+        emit(currentState.copyWith(polls: updatedPolls));
+      } else {
+        throw Exception("Failed to add poll: ${decodedBody['message']}");
+      }
+    } catch (e) {
+      print("Error: $e");
+      // Optionally, emit an error state if you have one
+      // emit(AddPollErrorState(error: e.toString()));
     }
-
-    print(res.body);
   }
 
   FutureOr<void> deletePollEvent(
@@ -141,11 +156,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     };
 
     final res = await http.delete(url, headers: headers);
-    final jsonBody = jsonDecode(res.body);
-    if (res.statusCode != 204) {
+    print(res.body);
+    print(res.statusCode);
+    if (res.statusCode >= 300) {
+      final jsonBody = jsonDecode(res.body);
       emit(DeletePollErrorState(error: jsonBody['message']));
     } else {
-      add(LoadHomeEvent());
+      final currentState = state as HomeWithPollState;
+
+      // Find the poll and update it
+      final updatedPolls =
+          currentState.polls.removeWhere((poll) => poll['id'] == event.pollId);
+
+      emit(currentState.copyWith(polls: updatedPolls));
     }
   }
 
@@ -167,8 +190,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     final res = await http.patch(url, headers: headers);
     final decodedRes = jsonDecode(res.body);
+
     if (res.statusCode == 200) {
-      add(LoadHomeEvent());
+      if (state is HomeWithPollState) {
+        final currentState = state as HomeWithPollState;
+
+        // Find the poll and update it
+        final updatedPolls = currentState.polls.map((poll) {
+          if (poll['id'] == event.pollId) {
+            poll['options'] =
+                decodedRes['options']; // Assuming 'votes' is the updated data
+          }
+          return poll;
+        }).toList();
+
+        emit(currentState.copyWith(polls: updatedPolls));
+      }
     } else {
       emit(VoteError(error: decodedRes["message"]));
     }
@@ -189,15 +226,28 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final body = {"pollId": event.pollID, "commentText": event.comment};
     final jsonBody = jsonEncode(body);
     final res = await http.post(url, headers: headers, body: jsonBody);
-    print(res.body);
+    final addedComment = jsonDecode(res.body);
 
-    add(LoadHomeEvent());
+    final currentState = state as HomeWithPollState;
+
+    final updatedPolls = currentState.polls.map((poll) {
+      if (poll['id'] == event.pollID) {
+        poll['comments'].add({
+          "id": addedComment["id"],
+          "commentText": addedComment["commentText"]
+        });
+      }
+      return poll;
+    }).toList();
+
+    emit(currentState.copyWith(polls: updatedPolls));
   }
 
   FutureOr<void> deleteComment(
       DeleteComment event, Emitter<HomeState> emit) async {
     final secureStorage = SecureStorage().secureStorage;
     final token = await secureStorage.read(key: 'token');
+
     String uri = 'http://localhost:9000/polls/comments/${event.comId}';
     final url = Uri.parse(uri);
     final headers = {
@@ -206,10 +256,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     };
 
     final res = await http.delete(url, headers: headers);
-    final jsonBody = jsonDecode(res.body);
+
     if (res.statusCode == 200) {
-      add(LoadHomeEvent());
+      final currentState = state as HomeWithPollState;
+
+      final updatedPolls = currentState.polls.map((poll) {
+        if (poll['id'] == event.pollId) {
+          poll['comments']
+              .removeWhere((comment) => comment['id'] == event.comId);
+        }
+        return poll;
+      }).toList();
+
+      emit(currentState.copyWith(polls: updatedPolls));
     } else {
+      final jsonBody = jsonDecode(res.body);
       emit(DeletePollErrorState(error: jsonBody['message']));
     }
   }
@@ -247,27 +308,57 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   FutureOr<void> addMemberEvent(
       AddMemberEvent event, Emitter<HomeState> emit) async {
-    final secureStorage = SecureStorage().secureStorage;
+    try {
+      // Retrieve the token and group from secure storage
+      final secureStorage = SecureStorage().secureStorage;
+      final token = await secureStorage.read(key: 'token');
+      final group = await secureStorage.read(key: 'group');
 
-    final token = await secureStorage.read(key: 'token');
-    final group = await secureStorage.read(key: 'group');
+      // Ensure token and group are not null
+      if (token == null || group == null) {
+        emit(AddMemberErrorState(
+            error: 'Authentication or group information is missing'));
+        return;
+      }
 
-    String uri = 'http://localhost:9000/groups/${group}/members';
+      // Prepare the request URL
+      String uri = 'http://localhost:9000/groups/$group/members';
+      final url = Uri.parse(uri);
 
-    final body = {"username": event.username};
-    final encodedBody = jsonEncode(body);
-    final url = Uri.parse(uri);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
+      // Prepare the request body and headers
+      final body = {"username": event.username};
+      final encodedBody = jsonEncode(body);
+      final headers = {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $token'
+      };
 
-    final res = await http.post(url, headers: headers, body: encodedBody);
-    final decodedRes = jsonDecode(res.body);
-    if (res.statusCode == 201) {
-      add(LoadMembersEvent());
-    } else {
-      emit(AddMemberErrorState(error: decodedRes["message"]));
+      // Send the HTTP POST request
+      final res = await http.post(url, headers: headers, body: encodedBody);
+      print(res.body);
+
+      final jsonBody = jsonDecode(res.body);
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        final currentState = state as MembersLoadedState;
+
+        final updatedMembers =
+            List<Map<String, dynamic>>.from(currentState.members)
+              ..add({
+                "username": jsonBody["username"],
+                "email": jsonBody["email"],
+                "isAdmin": jsonBody["isAdmin"]
+              });
+
+        emit(currentState.copyWith(members: updatedMembers));
+      } else {
+        emit(AddMemberErrorState(
+            error: jsonBody["message"] ?? 'Unknown error occurred'));
+      }
+    } catch (error) {
+      print(error);
+
+      emit(AddMemberErrorState(error: error.toString()));
     }
   }
 
@@ -290,7 +381,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     final res = await http.delete(url, headers: headers, body: encodedBody);
 
-    print(res.body);
-    add(LoadMembersEvent());
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      final currentState = state as MembersLoadedState;
+
+      final updatedMembers = currentState.members
+          .removeWhere((member) => member['username'] == event.username);
+
+      emit(currentState.copyWith(members: updatedMembers));
+    } else {
+      final jsonBody = jsonDecode(res.body);
+      emit(AddMemberErrorState(
+          error: jsonBody["message"] ?? 'Unknown error occurred'));
+    }
   }
 }

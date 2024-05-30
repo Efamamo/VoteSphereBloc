@@ -63,20 +63,21 @@ final GoRouter _router = GoRouter(initialLocation: '/', routes: [
     builder: (context, state) => Members(),
   ),
   GoRoute(
-    path: '/newpolls',
+    path: '/new_polls',
     builder: (context, state) {
-      final extra = state.extra as NewPollsData;
+      // Retrieve parameters if any
+      final Map<String, dynamic> params = state.extra as Map<String, dynamic>;
       return NewPolls(
-        question: extra.question,
-        choice1: extra.choice1,
-        choice2: extra.choice2,
-        choice3: extra.choice3,
-        choice4: extra.choice4,
-        choice5: extra.choice5,
-        questionError: extra.questionError,
+        question: params['question'],
+        choice1: params['choice1'],
+        choice2: params['choice2'],
+        choice3: params['choice3'],
+        choice4: params['choice4'],
+        choice5: params['choice5'],
+        questionError: params['questionError'],
       );
     },
-  )
+  ),
 ]);
 
 class MyApp extends StatelessWidget {

@@ -29,16 +29,15 @@ class _NoPollState extends State<NoPoll> {
   String questionError = '';
 
   void navigateNewPolls() {
-    context.go('/newpolls',
-        extra: NewPollsData(
-          question: question,
-          choice1: choice1,
-          choice2: choice2,
-          choice3: choice3,
-          choice4: choice4,
-          choice5: choice5,
-          questionError: questionError,
-        ));
+    context.push('/new_polls', extra: {
+      'question': question,
+      'choice1': choice1,
+      'choice2': choice2,
+      'choice3': choice3,
+      'choice4': choice4,
+      'choice5': choice5,
+      'questionError': '',
+    });
   }
 
   @override
@@ -48,11 +47,7 @@ class _NoPollState extends State<NoPoll> {
       bloc: homeBloc,
       listenWhen: (previous, current) => current is HomeActionState,
       buildWhen: (previous, current) => current is! HomeActionState,
-      listener: (context, state) {
-        if (state is NavigateToAddPoles) {
-          navigateNewPolls();
-        }
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -81,9 +76,7 @@ class _NoPollState extends State<NoPoll> {
                             borderRadius: BorderRadius.circular(5)),
                         foregroundColor: Colors.white,
                         backgroundColor: Colors.blue[700]),
-                    onPressed: () {
-                      homeBloc.add(NavigateToAddPollEvent());
-                    },
+                    onPressed: navigateNewPolls,
                     child: const Text("Add Poll"))
                 : const SizedBox(
                     height: 10,

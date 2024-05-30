@@ -43,7 +43,8 @@ class SendCommentEvent extends HomeEvent {
 
 class DeleteComment extends HomeEvent {
   final comId;
-  DeleteComment({required this.comId});
+  final pollId;
+  DeleteComment({required this.comId, required this.pollId});
 }
 
 class NavigateToMembersEvent extends HomeEvent {}

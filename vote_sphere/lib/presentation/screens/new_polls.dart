@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
 import '../widgets/textfield.dart';
-import '../../application/home/pole_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import './new_poll_model.dart';
 
 class NewPolls extends StatelessWidget {
   NewPolls({
@@ -16,6 +15,7 @@ class NewPolls extends StatelessWidget {
     required this.choice5,
     required this.questionError,
   });
+
   TextEditingController question;
   TextEditingController choice1;
   TextEditingController choice2;
@@ -215,7 +215,7 @@ class NewPolls extends StatelessWidget {
                               foregroundColor: Colors.white,
                             ),
                             onPressed: () {
-                              GoRouter.of(context).pop();
+                              context.go('/home');
                               homeBloc.add(AddPoleEvent(
                                   question: question.text, options: answers()));
                             },

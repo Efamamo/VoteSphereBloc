@@ -56,6 +56,7 @@ class _MemberPageState extends State<MemberPage> {
         },
         builder: (context, state) {
           if (state is MembersLoadingState) {
+            _usernameController.clear();
             return const Center(child: CircularProgressIndicator());
           }
           if (state is MembersLoadedState) {
