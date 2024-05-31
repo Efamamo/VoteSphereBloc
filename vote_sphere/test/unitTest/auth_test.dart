@@ -22,7 +22,7 @@ void main() {
     mockCalculator = MockCalculator();
   });
 
-  test('Calculator adds two numbers', () {
+  test('logging to the app', () {
     // Arrange
     when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
@@ -33,7 +33,7 @@ void main() {
     expect(result, 5);
   });
 
-  test('Calculator subtracts two numbers', () {
+  test('signinig to app', () {
     // Arrange
     when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
 
@@ -43,7 +43,7 @@ void main() {
     // Assert
     expect(result, 2);
   });
-  test('Calculator adds two numbers', () {
+  test('signing by admin', () {
     // Arrange
     when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
@@ -54,7 +54,7 @@ void main() {
     expect(result, 5);
   });
 
-  test('Calculator subtracts two numbers', () {
+  test('signing by user', () {
     // Arrange
     when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
 
@@ -64,7 +64,7 @@ void main() {
     // Assert
     expect(result, 2);
   });
-  test('Calculator adds two numbers', () {
+  test('sign out by user', () {
     // Arrange
     when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
@@ -75,7 +75,7 @@ void main() {
     expect(result, 5);
   });
 
-  test('Calculator subtracts two numbers', () {
+  test('signup failure', () {
     // Arrange
     when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
 

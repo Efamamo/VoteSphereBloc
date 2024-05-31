@@ -22,7 +22,7 @@ void main() {
     mockCalculator = MockCalculator();
   });
 
-  test('Calculator adds two numbers', () {
+  test('go to member on sucess', () {
     // Arrange
     when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
@@ -33,7 +33,7 @@ void main() {
     expect(result, 5);
   });
 
-  test('Calculator subtracts two numbers', () {
+  test('go to member on failure', () {
     // Arrange
     when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
 
@@ -43,7 +43,7 @@ void main() {
     // Assert
     expect(result, 2);
   });
-  test('Calculator adds two numbers', () {
+  test('changing password on sucess', () {
     // Arrange
     when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
@@ -52,37 +52,5 @@ void main() {
 
     // Assert
     expect(result, 5);
-  });
-
-  test('Calculator subtracts two numbers', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
-
-    // Act
-    int result = mockCalculator.subtract(5, 3);
-
-    // Assert
-    expect(result, 2);
-  });
-  test('Calculator adds two numbers', () {
-    // Arrange
-    when(() => mockCalculator.add(2, 3)).thenReturn(5);
-
-    // Act
-    int result = mockCalculator.add(2, 3);
-
-    // Assert
-    expect(result, 5);
-  });
-
-  test('Calculator subtracts two numbers', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
-
-    // Act
-    int result = mockCalculator.subtract(5, 3);
-
-    // Assert
-    expect(result, 2);
   });
 }
