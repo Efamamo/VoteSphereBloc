@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:vote_sphere/infrastructure/data_provider/settings_dataprovider.dart';
 import 'package:vote_sphere/infrastructure/local_storage/secure_storage.dart';
 
 class SettingsRepository {
@@ -9,23 +10,13 @@ class SettingsRepository {
     final email = await secureStorage.read(key: "email");
     final role = await secureStorage.read(key: "role");
 
-    return {"username": username, "email": email, "role" : role};
+    return {"username": username, "email": email, "role": role};
   }
 
   static Future<String> changePassword(event) async {
-    String uri = 'http://10.0.2.2:9000/auth/changePassword';
-    final url = Uri.parse(uri);
-    final secureStorage = SecureStorage().secureStorage;
-    final token = await secureStorage.read(key: 'token');
-    final body = {"newPassword": event.newPassword};
-    final jsonBody = jsonEncode(body);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
+    final res =
+        await SettingsDataProvider.changePassword(event) as http.Response;
 
-    final res = await http.patch(url, headers: headers, body: jsonBody);
-    print(res.statusCode);
     if (res.statusCode == 200) {
       return "success";
     } else {
@@ -40,14 +31,8 @@ class SettingsRepository {
 
   static Future<bool> deleteAccount() async {
     final secureStorage = SecureStorage().secureStorage;
-    final token = await secureStorage.read(key: 'token');
-    String uri = 'http://10.0.2.2:9000/auth/deleteAccount';
-    final url = Uri.parse(uri);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
-    final res = await http.delete(url, headers: headers);
+
+    final res = await SettingsDataProvider.deleteAccount() as http.Response;
     if (res.statusCode >= 200 && res.statusCode < 300) {
       await secureStorage.deleteAll();
       return true;
