@@ -1,17 +1,12 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+import 'package:vote_sphere/infrastructure/data_provider/auth_dataprovider.dart';
 import 'package:vote_sphere/infrastructure/local_storage/secure_storage.dart';
 
 class AuthRepository {
   static Future<String> login(event) async {
-    String uri = 'http://10.0.2.2:9000/auth/signin';
-    final url = Uri.parse(uri);
-
-    final body = {"username": event.username, "password": event.password};
-    final jsonBody = jsonEncode(body);
-    final headers = {"Content-Type": "application/json"};
-
-    final res = await http.post(url, headers: headers, body: jsonBody);
+    final res = await AuthDataProvider.login(event) as http.Response;
     Map response = jsonDecode(res.body);
 
     if (response.containsKey('message')) {
@@ -36,19 +31,7 @@ class AuthRepository {
   }
 
   static Future<String> signUp(event) async {
-    String uri = 'http://10.0.2.2:9000/auth/signup';
-    final url = Uri.parse(uri);
-    final body = {
-      "username": event.username,
-      "role": event.role,
-      "email": event.email,
-      "password": event.password
-    };
-
-    final jsonBody = jsonEncode(body);
-    final headers = {"Content-Type": "application/json"};
-
-    final res = await http.post(url, headers: headers, body: jsonBody);
+    final res = await AuthDataProvider.signUp(event) as http.Response;
     Map response = jsonDecode(res.body);
 
     if (res.statusCode != 201) {
