@@ -1,6 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vote_sphere/presentation/screens/landing/bloc/landing_bloc.dart';
+import 'package:vote_sphere/application/blocs/landing_bloc.dart';
 
 void main() {
   group('LandingBloc', () {

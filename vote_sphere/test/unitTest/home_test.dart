@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
-import 'package:vote_sphere/presentation/screens/auth/bloc/auth_bloc.dart';
-import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
+import 'package:vote_sphere/application/blocs/auth_bloc.dart';
+import 'package:vote_sphere/application/blocs/home_bloc.dart';
 import 'auth_test.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
