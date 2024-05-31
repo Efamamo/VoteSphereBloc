@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
+import 'package:vote_sphere/application/blocs/home_bloc.dart';
 import 'package:vote_sphere/presentation/screens/home/home.dart';
 import 'package:vote_sphere/presentation/screens/home/no_polls.dart';
 import 'package:vote_sphere/presentation/screens/home/no_group.dart';
@@ -40,7 +40,8 @@ void main() {
       expect(find.byType(Home), findsOneWidget);
     });
 
-    testWidgets('should show CircularProgressIndicator when in LoadingState', (WidgetTester tester) async {
+    testWidgets('should show CircularProgressIndicator when in LoadingState',
+        (WidgetTester tester) async {
       // Mock the HomeBloc to return a LoadingState
       MockHomeBloc mockHomeBloc = MockHomeBloc();
       when(mockHomeBloc.state).thenReturn(LoadingState());
@@ -59,10 +60,12 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('should show NoGroup widget when in NoGroupState', (WidgetTester tester) async {
+    testWidgets('should show NoGroup widget when in NoGroupState',
+        (WidgetTester tester) async {
       // Mock the HomeBloc to return a NoGroupState
       MockHomeBloc mockHomeBloc = MockHomeBloc();
-      when(mockHomeBloc.state).thenReturn(NoGroupState(role: 'admin', group: '', token: '', username: '', email: ''));
+      when(mockHomeBloc.state).thenReturn(NoGroupState(
+          role: 'admin', group: '', token: '', username: '', email: ''));
 
       // Build our app and trigger a frame.
       await tester.pumpWidget(
@@ -78,10 +81,18 @@ void main() {
       expect(find.byType(NoGroup), findsOneWidget);
     });
 
-    testWidgets('should show NoPoll widget when in HomeWithPollState with empty polls list', (WidgetTester tester) async {
+    testWidgets(
+        'should show NoPoll widget when in HomeWithPollState with empty polls list',
+        (WidgetTester tester) async {
       // Mock the HomeBloc to return a HomeWithPollState with empty polls list
       MockHomeBloc mockHomeBloc = MockHomeBloc();
-      when(mockHomeBloc.state).thenReturn(HomeWithPollState(polls: [], group: 'Group 1', role: 'user', username: '', email: '', token: ''));
+      when(mockHomeBloc.state).thenReturn(HomeWithPollState(
+          polls: [],
+          group: 'Group 1',
+          role: 'user',
+          username: '',
+          email: '',
+          token: ''));
 
       // Build our app and trigger a frame.
       await tester.pumpWidget(
@@ -97,10 +108,19 @@ void main() {
       expect(find.byType(NoPoll), findsOneWidget);
     });
 
-    testWidgets('should show MyPolls widget when in HomeWithPollState with non-empty polls list', (WidgetTester tester) async {
+    testWidgets(
+        'should show MyPolls widget when in HomeWithPollState with non-empty polls list',
+        (WidgetTester tester) async {
       // Mock the HomeBloc to return a HomeWithPollState with non-empty polls list
-      MockHomeBloc mockHomeBloc = MockHomeBloc(); // Initialize the mockHomeBloc variable
-      when(mockHomeBloc.state).thenReturn(HomeWithPollState(polls: ['Poll 1', 'Poll 2'], group: 'Group 1', role: 'user', username: '', email: '', token: ''));
+      MockHomeBloc mockHomeBloc =
+          MockHomeBloc(); // Initialize the mockHomeBloc variable
+      when(mockHomeBloc.state).thenReturn(HomeWithPollState(
+          polls: ['Poll 1', 'Poll 2'],
+          group: 'Group 1',
+          role: 'user',
+          username: '',
+          email: '',
+          token: ''));
 
       // Build our app and trigger a frame.
       await tester.pumpWidget(

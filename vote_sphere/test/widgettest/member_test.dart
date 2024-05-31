@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
+import 'package:vote_sphere/application/blocs/home_bloc.dart';
 import 'package:vote_sphere/presentation/screens/member.dart';
 import 'package:mockito/mockito.dart';
 
@@ -42,7 +42,8 @@ void main() {
     expect(find.text('Members'), findsOneWidget);
   });
 
-  testWidgets('renders CircularProgressIndicator when loading members', (WidgetTester tester) async {
+  testWidgets('renders CircularProgressIndicator when loading members',
+      (WidgetTester tester) async {
     HomeBloc? homeBloc;
 
     when(homeBloc!.state).thenReturn(MembersLoadingState());
@@ -58,10 +59,12 @@ void main() {
     expect(circularProgressFinder, findsOneWidget);
   });
 
-  testWidgets('renders Add Member button when user is an admin', (WidgetTester tester) async {
+  testWidgets('renders Add Member button when user is an admin',
+      (WidgetTester tester) async {
     HomeBloc? homeBloc;
 
-    when(homeBloc!.state).thenReturn(MembersLoadedState(role: 'Admin', members: []));
+    when(homeBloc!.state)
+        .thenReturn(MembersLoadedState(role: 'Admin', members: []));
 
     await tester.pumpWidget(
       BlocProvider<HomeBloc>.value(
@@ -73,7 +76,4 @@ void main() {
     final addMemberButtonFinder = find.text('Add Member');
     expect(addMemberButtonFinder, findsOneWidget);
   });
-
-
-
 }
