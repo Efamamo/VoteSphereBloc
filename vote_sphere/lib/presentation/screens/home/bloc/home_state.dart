@@ -121,3 +121,5 @@ class VoteError extends HomeActionState {
 }
 
 class UnloggedState extends HomeActionState {}
+
+class MemberPagePopped extends HomeState {}

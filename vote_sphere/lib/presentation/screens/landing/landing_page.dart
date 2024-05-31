@@ -4,21 +4,10 @@ import 'package:vote_sphere/presentation/screens/landing/bloc/landing_bloc.dart'
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:go_router/go_router.dart';
 
-class LandingPage extends StatefulWidget {
+class LandingPage extends StatelessWidget {
   LandingPage({super.key});
 
-  @override
-  State<LandingPage> createState() => _LandingPageState();
-}
-
-class _LandingPageState extends State<LandingPage> {
   final LandingBloc landingBloc = LandingBloc();
-  @override
-  void initState() {
-    final LandingBloc landingBloc = LandingBloc();
-    landingBloc.add(LandingInitEvent());
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +17,9 @@ class _LandingPageState extends State<LandingPage> {
       buildWhen: (previous, current) => current is! LandingActionState,
       listener: (context, state) {
         if (state is LandingNavigateToLogin) {
-          context.go('/login');
+          context.push('/login');
         } else if (state is LandingNavigateToSignup) {
-          context.go('/signup');
+          context.push('/signup');
         }
       },
       builder: (context, state) {

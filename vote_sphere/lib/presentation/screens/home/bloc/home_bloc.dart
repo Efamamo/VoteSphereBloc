@@ -26,12 +26,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<AddMemberEvent>(addMemberEvent);
     on<DeleteMemberEvent>(deleteMemberEvent);
     on<UpdateCommentEvent>(updateCommentEvent);
+    on<PopMemberPageEvent>(popMemberPageEvent);
   }
 
   FutureOr<void> loadHomeEvent(
       LoadHomeEvent event, Emitter<HomeState> emit) async {
-    emit(LoadingState());
-
     final secureStorage = SecureStorage().secureStorage;
     final group = await secureStorage.read(key: "group");
     final role = await secureStorage.read(key: 'role');
@@ -143,18 +142,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       };
 
       final res = await http.post(url, headers: headers, body: jsonBody);
-      final decodedBody = jsonDecode(res.body);
+      // final decodedBody = jsonDecode(res.body);
 
-      if (res.statusCode == 201) {
-        final currentState = state as HomeWithPollState;
-        decodedBody['comments'] = [];
-        final updatedPolls = List<Map<String, dynamic>>.from(currentState.polls)
-          ..add(decodedBody);
+      // if (res.statusCode == 201) {
+      //   final currentState = state as HomeWithPollState;
+      //   decodedBody['comments'] = [];
+      //   final updatedPolls = List<Map<String, dynamic>>.from(currentState.polls)
+      //     ..add(decodedBody);
 
-        emit(currentState.copyWith(polls: updatedPolls));
-      } else {
-        throw Exception("Failed to add poll: ${decodedBody['message']}");
-      }
+      add(LoadHomeEvent());
     } catch (e) {
       print("Error: $e");
       // Optionally, emit an error state if you have one
@@ -243,7 +239,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final body = {"pollId": event.pollID, "commentText": event.comment};
     final jsonBody = jsonEncode(body);
     final res = await http.post(url, headers: headers, body: jsonBody);
-
+    print("state is ,$state");
     if (res.statusCode == 201) {
       final addedComment = jsonDecode(res.body);
 
@@ -512,5 +508,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } catch (e) {
       print(e);
     }
+  }
+
+  FutureOr<void> popMemberPageEvent(
+      PopMemberPageEvent event, Emitter<HomeState> emit) {
+    add(LoadHomeEvent());
   }
 }

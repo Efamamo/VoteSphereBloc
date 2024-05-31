@@ -34,10 +34,10 @@ class _LoginPageState extends State<LoginPage> {
         }
         if (state is LogInSuccessState) {
           print(state);
-          context.goNamed('home');
+          context.push('/home');
         }
         if (state is LoginNavigateToSignupState) {
-          context.go('/signup');
+          context.push('/signup');
         }
       },
       builder: (context, state) {

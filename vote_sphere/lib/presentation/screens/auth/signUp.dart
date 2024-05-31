@@ -30,9 +30,9 @@ class _SignUpPageState extends State<SignUpPage> {
       buildWhen: (previous, current) => current is! AuthActionState,
       listener: (context, state) {
         if (state is SignupNavigateToLoginState) {
-          context.go('/login');
+          context.push('/login');
         } else if (state is SignUpSuccessState) {
-          context.goNamed('home');
+          context.push('/home');
         } else if (state is SignupError) {
           print(state.error);
           final snackBar = SnackBar(

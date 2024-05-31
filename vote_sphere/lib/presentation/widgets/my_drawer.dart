@@ -19,11 +19,11 @@ class MyDrawer extends StatelessWidget {
       buildWhen: (previous, current) => current is! HomeActionState,
       listener: (context, state) {
         if (state is NavigateToSettingState) {
-          context.go('/settings');
+          context.push('/settings');
         }
 
         if (state is NavigateToMembersState) {
-          context.go('/members');
+          context.push('/members');
         }
       },
       builder: (context, state) {

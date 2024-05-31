@@ -65,7 +65,6 @@ final GoRouter _router = GoRouter(initialLocation: '/', routes: [
   GoRoute(
     path: '/new_polls',
     builder: (context, state) {
-      // Retrieve parameters if any
       final Map<String, dynamic> params = state.extra as Map<String, dynamic>;
       return NewPolls(
         question: params['question'],

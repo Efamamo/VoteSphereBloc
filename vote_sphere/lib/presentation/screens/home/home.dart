@@ -116,11 +116,9 @@ class _HomeState extends State<Home> {
                     role: pollState.role,
                   )));
             }
+          } else {
+            return SizedBox();
           }
-          return Container(
-            color: Colors.red,
-            height: 10,
-          );
         });
   }
 }

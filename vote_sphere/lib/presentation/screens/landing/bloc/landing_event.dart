@@ -6,5 +6,3 @@ sealed class LandingEvent {}
 class SignupPageButtonNavigateEvent extends LandingEvent {}
 
 class LoginPageButtonNavigateEvent extends LandingEvent {}
-
-class LandingInitEvent extends LandingEvent {}

@@ -68,3 +68,5 @@ class UpdateCommentEvent extends HomeEvent {
   UpdateCommentEvent(
       {required this.comment, required this.comId, required this.pollId});
 }
+
+class PopMemberPageEvent extends HomeEvent {}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
   runApp(Members());
@@ -9,9 +10,16 @@ void main() {
 class Members extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final homeBloc = BlocProvider.of<HomeBloc>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 2, 34, 82),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              GoRouter.of(context).pop();
+              homeBloc.add(PopMemberPageEvent());
+            }),
         title: const Text(
           'Members',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -68,7 +76,7 @@ class _MemberPageState extends State<MemberPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   memberstate.role == "Admin"
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,

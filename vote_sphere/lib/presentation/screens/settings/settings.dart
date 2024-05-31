@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:vote_sphere/presentation/screens/settings/bloc/settings_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -111,8 +112,15 @@ class _SettingsState extends State<Settings> {
               body: Center(child: CircularProgressIndicator()));
         } else if (state is SettingsLoadedState) {
           final settingState = state as SettingsLoadedState;
+          final homeBloc = BlocProvider.of<HomeBloc>(context);
           return Scaffold(
               appBar: AppBar(
+                leading: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      GoRouter.of(context).pop();
+                      homeBloc.add(PopMemberPageEvent());
+                    }),
                 backgroundColor: const Color.fromARGB(255, 2, 34, 82),
                 title: const Text(
                   "SETTINGS",
