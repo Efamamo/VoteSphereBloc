@@ -54,7 +54,7 @@ void main() {
           return bloc;
         },
         act: (bloc) => bloc.add(LoadSettingEvent()),
-        expect: () => [SettingsLoadedState(username: "testUser", email: "test@example.com")],
+        expect: () => [SettingsLoadedState(username: "testUser", email: "test@example.com", role: null)],
       );
     });
 
