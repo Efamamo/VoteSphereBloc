@@ -1,3 +1,4 @@
+import 'package:vote_sphere/infrastructure/data_provider/home_dataprovider.dart';
 import 'package:vote_sphere/infrastructure/local_storage/secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -20,13 +21,8 @@ class HomeRespository {
         "email": email
       };
     } else {
-      String uri = 'http://10.0.2.2:9000/polls?groupId=$group';
-
-      final url = Uri.parse(uri);
-      final res =
-          await http.get(url, headers: {'Authorization': 'Bearer $token'});
+      final res = await HomeDataProvider.loadHome() as http.Response;
       final jsonBody = jsonDecode(res.body);
-      print(res.statusCode);
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
         final polls = jsonBody;
@@ -53,22 +49,8 @@ class HomeRespository {
 
   static Future<bool> createGroup(event) async {
     final secureStorage = SecureStorage().secureStorage;
-    final username = await secureStorage.read(key: 'username');
-    final token = await secureStorage.read(key: 'token');
-    final role = await secureStorage.read(key: 'role');
 
-    final email = await secureStorage.read(key: 'email');
-
-    String uri = 'http://10.0.2.2:9000/groups';
-    final url = Uri.parse(uri);
-    final body = {"adminUsername": username, "groupName": event.groupName};
-    final jsonBody = jsonEncode(body);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
-
-    final res = await http.post(url, headers: headers, body: jsonBody);
+    final res = await HomeDataProvider.createGroup(event) as http.Response;
     if (res.statusCode >= 200 && res.statusCode < 300) {
       Map response = jsonDecode(res.body);
 
@@ -89,20 +71,7 @@ class HomeRespository {
         return false;
       }
 
-      String uri = 'http://10.0.2.2:9000/polls';
-      final url = Uri.parse(uri);
-      final body = {
-        "poll": {"question": event.question, "options": event.options},
-        "groupID": group
-      };
-
-      final jsonBody = jsonEncode(body);
-      final headers = {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $token'
-      };
-
-      final res = await http.post(url, headers: headers, body: jsonBody);
+      final res = await HomeDataProvider.addComment(event) as http.Response;
       if (res.statusCode >= 200 && res.statusCode < 300) {
         return true;
       }
@@ -113,17 +82,7 @@ class HomeRespository {
   }
 
   static Future<bool> deletePoll(event) async {
-    final secureStorage = SecureStorage().secureStorage;
-    final token = await secureStorage.read(key: 'token');
-
-    String uri = 'http://10.0.2.2:9000/polls/${event.pollId}';
-    final url = Uri.parse(uri);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
-
-    final res = await http.delete(url, headers: headers);
+    final res = await HomeDataProvider.deletePoll(event) as http.Response;
 
     if (res.statusCode >= 200 && res.statusCode < 300) {
       return true;
@@ -133,19 +92,7 @@ class HomeRespository {
   }
 
   static Future<bool> vote(event) async {
-    final secureStorage = SecureStorage().secureStorage;
-    final token = await secureStorage.read(key: 'token');
-
-    String uri =
-        'http://10.0.2.2:9000/polls/${event.pollId}/vote?optionId=${event.optionId}';
-    final url = Uri.parse(uri);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
-
-    final res = await http.patch(url, headers: headers);
-
+    final res = HomeDataProvider.vote(event) as http.Response;
     if (res.statusCode == 200) {
       return true;
     } else {
@@ -154,18 +101,7 @@ class HomeRespository {
   }
 
   static Future<bool> addComment(event) async {
-    final secureStorage = SecureStorage().secureStorage;
-    final token = await secureStorage.read(key: 'token');
-    String uri = 'http://10.0.2.2:9000/polls/comments';
-    final url = Uri.parse(uri);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
-
-    final body = {"pollId": event.pollID, "commentText": event.comment};
-    final jsonBody = jsonEncode(body);
-    final res = await http.post(url, headers: headers, body: jsonBody);
+    final res = await HomeDataProvider.addComment(event) as http.Response;
 
     if (res.statusCode >= 200 && res.statusCode < 300) {
       return true;
@@ -175,20 +111,7 @@ class HomeRespository {
   }
 
   static Future<bool> updateComment(event) async {
-    final secureStorage = SecureStorage().secureStorage;
-    final token = await secureStorage.read(key: 'token');
-
-    String uri = 'http://10.0.2.2:9000/polls/comments/${event.comId}';
-    final url = Uri.parse(uri);
-    final body = {"commentText": event.comment};
-
-    final jsonBody = jsonEncode(body);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
-
-    final res = await http.patch(url, headers: headers, body: jsonBody);
+    final res = await HomeDataProvider.updateComment(event) as http.Response;
 
     if (res.statusCode >= 200 && res.statusCode < 300) {
       return true;
@@ -198,17 +121,7 @@ class HomeRespository {
   }
 
   static Future<bool> deleteComment(event) async {
-    final secureStorage = SecureStorage().secureStorage;
-    final token = await secureStorage.read(key: 'token');
-
-    String uri = 'http://10.0.2.2:9000/polls/comments/${event.comId}';
-    final url = Uri.parse(uri);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
-
-    final res = await http.delete(url, headers: headers);
+    final res = await HomeDataProvider.deleteComment(event) as http.Response;
     if (res.statusCode >= 200 && res.statusCode < 300) {
       return true;
     }
@@ -217,20 +130,9 @@ class HomeRespository {
 
   static Future<Map> getMembers(event) async {
     final secureStorage = SecureStorage().secureStorage;
-
-    final token = await secureStorage.read(key: 'token');
-    final group = await secureStorage.read(key: 'group');
     final role = await secureStorage.read(key: 'role');
 
-    String uri = 'http://10.0.2.2:9000/groups/${group}/members';
-    final url = Uri.parse(uri);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
-
-    final res = await http.get(url, headers: headers);
-    print(res.body);
+    final res = await HomeDataProvider.getMembers(event) as http.Response;
     if (res.statusCode >= 200 && res.statusCode < 300) {
       final decodedBody = jsonDecode(res.body);
       return {"members": decodedBody, "role": role};
@@ -240,23 +142,7 @@ class HomeRespository {
 
   static Future<bool> addMember(event) async {
     try {
-      // Retrieve the token and group from secure storage
-      final secureStorage = SecureStorage().secureStorage;
-      final token = await secureStorage.read(key: 'token');
-      final group = await secureStorage.read(key: 'group');
-
-      String uri = 'http://10.0.2.2:9000/groups/$group/members';
-      final url = Uri.parse(uri);
-
-      final body = {"username": event.username};
-      final encodedBody = jsonEncode(body);
-      final headers = {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $token'
-      };
-
-      final res = await http.post(url, headers: headers, body: encodedBody);
-      print(res.body);
+      final res = await HomeDataProvider.addMember(event) as http.Response;
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
         return true;
@@ -269,22 +155,7 @@ class HomeRespository {
   }
 
   static Future<bool> deleteMember(event) async {
-    final secureStorage = SecureStorage().secureStorage;
-
-    final token = await secureStorage.read(key: 'token');
-    final group = await secureStorage.read(key: 'group');
-
-    String uri = 'http://10.0.2.2:9000/groups/${group}/members';
-
-    final body = {"username": event.username};
-    final encodedBody = jsonEncode(body);
-    final url = Uri.parse(uri);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
-
-    final res = await http.delete(url, headers: headers, body: encodedBody);
+    final res = await HomeDataProvider.deleteMember(event) as http.Response;
 
     try {
       if (res.statusCode >= 200 && res.statusCode < 300) {
