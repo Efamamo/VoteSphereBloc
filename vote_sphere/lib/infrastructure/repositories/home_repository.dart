@@ -20,7 +20,7 @@ class HomeRespository {
         "email": email
       };
     } else {
-      String uri = 'http://localhost:9000/polls?groupId=$group';
+      String uri = 'http://10.0.2.2:9000/polls?groupId=$group';
 
       final url = Uri.parse(uri);
       final res =
@@ -59,7 +59,7 @@ class HomeRespository {
 
     final email = await secureStorage.read(key: 'email');
 
-    String uri = 'http://localhost:9000/groups';
+    String uri = 'http://10.0.2.2:9000/groups';
     final url = Uri.parse(uri);
     final body = {"adminUsername": username, "groupName": event.groupName};
     final jsonBody = jsonEncode(body);
@@ -89,7 +89,7 @@ class HomeRespository {
         return false;
       }
 
-      String uri = 'http://localhost:9000/polls';
+      String uri = 'http://10.0.2.2:9000/polls';
       final url = Uri.parse(uri);
       final body = {
         "poll": {"question": event.question, "options": event.options},
@@ -116,7 +116,7 @@ class HomeRespository {
     final secureStorage = SecureStorage().secureStorage;
     final token = await secureStorage.read(key: 'token');
 
-    String uri = 'http://localhost:9000/polls/${event.pollId}';
+    String uri = 'http://10.0.2.2:9000/polls/${event.pollId}';
     final url = Uri.parse(uri);
     final headers = {
       "Content-Type": "application/json",
@@ -137,7 +137,7 @@ class HomeRespository {
     final token = await secureStorage.read(key: 'token');
 
     String uri =
-        'http://localhost:9000/polls/${event.pollId}/vote?optionId=${event.optionId}';
+        'http://10.0.2.2:9000/polls/${event.pollId}/vote?optionId=${event.optionId}';
     final url = Uri.parse(uri);
     final headers = {
       "Content-Type": "application/json",
@@ -156,7 +156,7 @@ class HomeRespository {
   static Future<bool> addComment(event) async {
     final secureStorage = SecureStorage().secureStorage;
     final token = await secureStorage.read(key: 'token');
-    String uri = 'http://localhost:9000/polls/comments';
+    String uri = 'http://10.0.2.2:9000/polls/comments';
     final url = Uri.parse(uri);
     final headers = {
       "Content-Type": "application/json",
@@ -178,7 +178,7 @@ class HomeRespository {
     final secureStorage = SecureStorage().secureStorage;
     final token = await secureStorage.read(key: 'token');
 
-    String uri = 'http://localhost:9000/polls/comments/${event.comId}';
+    String uri = 'http://10.0.2.2:9000/polls/comments/${event.comId}';
     final url = Uri.parse(uri);
     final body = {"commentText": event.comment};
 
@@ -201,7 +201,7 @@ class HomeRespository {
     final secureStorage = SecureStorage().secureStorage;
     final token = await secureStorage.read(key: 'token');
 
-    String uri = 'http://localhost:9000/polls/comments/${event.comId}';
+    String uri = 'http://10.0.2.2:9000/polls/comments/${event.comId}';
     final url = Uri.parse(uri);
     final headers = {
       "Content-Type": "application/json",
@@ -222,7 +222,7 @@ class HomeRespository {
     final group = await secureStorage.read(key: 'group');
     final role = await secureStorage.read(key: 'role');
 
-    String uri = 'http://localhost:9000/groups/${group}/members';
+    String uri = 'http://10.0.2.2:9000/groups/${group}/members';
     final url = Uri.parse(uri);
     final headers = {
       "Content-Type": "application/json",
@@ -245,7 +245,7 @@ class HomeRespository {
       final token = await secureStorage.read(key: 'token');
       final group = await secureStorage.read(key: 'group');
 
-      String uri = 'http://localhost:9000/groups/$group/members';
+      String uri = 'http://10.0.2.2:9000/groups/$group/members';
       final url = Uri.parse(uri);
 
       final body = {"username": event.username};
@@ -274,7 +274,7 @@ class HomeRespository {
     final token = await secureStorage.read(key: 'token');
     final group = await secureStorage.read(key: 'group');
 
-    String uri = 'http://localhost:9000/groups/${group}/members';
+    String uri = 'http://10.0.2.2:9000/groups/${group}/members';
 
     final body = {"username": event.username};
     final encodedBody = jsonEncode(body);
