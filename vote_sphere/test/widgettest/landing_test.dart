@@ -27,8 +27,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(LandingPage), findsOneWidget);
-      print('LandingPage should be created and rendered - Passed');
+      expectLater(find.byType(LandingPage), findsOneWidget, reason: 'LandingPage should be created and rendered');
     });
 
     testWidgets('LandingPage should display a welcome message', (WidgetTester tester) async {
@@ -39,8 +38,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Welcome to VoteSphere'), findsOneWidget);
-      print('LandingPage should display a welcome message - Passed');
+      expectLater(find.text('Welcome to VoteSphere'), findsOneWidget, reason: 'LandingPage should display a welcome message');
     });
 
     testWidgets('LandingPage should have a login button', (WidgetTester tester) async {
@@ -51,8 +49,7 @@ void main() {
         ),
       );
 
-      expect(find.byKey(Key('loginButton')), findsOneWidget);
-      print('LandingPage should have a login button - Passed');
+      expectLater(find.byKey(Key('loginButton')), findsOneWidget, reason: 'LandingPage should have a login button');
     });
   });
 }
