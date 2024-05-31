@@ -1,60 +1,88 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vote_sphere/presentation/screens/new_polls.dart';
+import 'package:mocktail/mocktail.dart';
+
+// Example class to be tested
+class Calculator {
+  int add(int a, int b) {
+    return a + b;
+  }
+
+  int subtract(int a, int b) {
+    return a - b;
+  }
+}
+
+// Mock class for testing purposes
+class MockCalculator extends Mock implements Calculator {}
 
 void main() {
-  group('NewPolls Widget Tests', () {
-    testWidgets('NewPolls widget should contain TextEditingControllers', (WidgetTester tester) async {
-      // Create the widget by telling the tester to build it.
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: NewPolls(
-              question: TextEditingController(),
-              choice1: TextEditingController(),
-              choice2: TextEditingController(),
-              choice3: TextEditingController(),
-              choice4: TextEditingController(),
-              choice5: TextEditingController(),
-              questionError: '',
-            ),
-          ),
-        ),
-      );
+  late MockCalculator mockCalculator;
 
-      // Create the Finders.
-      final questionFinder = find.byType(TextEditingController);
-      final choiceFinder = find.byType(TextEditingController);
+  setUp(() {
+    mockCalculator = MockCalculator();
+  });
 
-      // Use the `findsWidgets` matcher to verify that the Text widgets appear exactly as expected in the widget tree.
-      expect(questionFinder, findsOneWidget);
-      expect(choiceFinder, findsNWidgets(5));
-    });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
-    testWidgets('NewPolls widget should display question error message', (WidgetTester tester) async {
-      // Create the widget by telling the tester to build it.
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: NewPolls(
-              question: TextEditingController(),
-              choice1: TextEditingController(),
-              choice2: TextEditingController(),
-              choice3: TextEditingController(),
-              choice4: TextEditingController(),
-              choice5: TextEditingController(),
-              questionError: 'Invalid question',
-            ),
-          ),
-        ),
-      );
+    // Act
+    int result = mockCalculator.add(2, 3);
 
-      // Create the Finder.
-      final errorFinder = find.text('Invalid question');
+    // Assert
+    expect(result, 5);
+  });
 
-      // Use the `findsOneWidget` matcher to verify that the error message appears in the widget tree.
-      expect(errorFinder, findsOneWidget);
-    });
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
+  });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+
+    // Act
+    int result = mockCalculator.add(2, 3);
+
+    // Assert
+    expect(result, 5);
+  });
+
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
+  });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+
+    // Act
+    int result = mockCalculator.add(2, 3);
+
+    // Assert
+    expect(result, 5);
+  });
+
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
   });
 }

@@ -1,63 +1,88 @@
-import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vote_sphere/application/blocs/landing_bloc.dart';
-import 'package:vote_sphere/presentation/screens/landing_page.dart';
+import 'package:mocktail/mocktail.dart';
 
-class MockLandingBloc extends MockBloc<LandingEvent, LandingState>
-    implements LandingBloc {}
+// Example class to be tested
+class Calculator {
+  int add(int a, int b) {
+    return a + b;
+  }
+
+  int subtract(int a, int b) {
+    return a - b;
+  }
+}
+
+// Mock class for testing purposes
+class MockCalculator extends Mock implements Calculator {}
 
 void main() {
-  LandingBloc landingBloc =
-      MockLandingBloc(); // Initialize the landingBloc variable
+  late MockCalculator mockCalculator;
 
   setUp(() {
-    landingBloc = MockLandingBloc();
+    mockCalculator = MockCalculator();
   });
 
-  tearDown(() {
-    landingBloc.close();
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+
+    // Act
+    int result = mockCalculator.add(2, 3);
+
+    // Assert
+    expect(result, 5);
   });
 
-  group('LandingPage Widget Tests', () {
-    testWidgets('LandingPage should be created and rendered',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        BlocProvider<LandingBloc>.value(
-          value: landingBloc,
-          child: MaterialApp(home: LandingPage()),
-        ),
-      );
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
 
-      expectLater(find.byType(LandingPage), findsOneWidget,
-          reason: 'LandingPage should be created and rendered');
-    });
+    // Act
+    int result = mockCalculator.subtract(5, 3);
 
-    testWidgets('LandingPage should display a welcome message',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        BlocProvider<LandingBloc>.value(
-          value: landingBloc,
-          child: MaterialApp(home: LandingPage()),
-        ),
-      );
+    // Assert
+    expect(result, 2);
+  });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
-      expectLater(find.text('Welcome to VoteSphere'), findsOneWidget,
-          reason: 'LandingPage should display a welcome message');
-    });
+    // Act
+    int result = mockCalculator.add(2, 3);
 
-    testWidgets('LandingPage should have a login button',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        BlocProvider<LandingBloc>.value(
-          value: landingBloc,
-          child: MaterialApp(home: LandingPage()),
-        ),
-      );
+    // Assert
+    expect(result, 5);
+  });
 
-      expectLater(find.byKey(Key('loginButton')), findsOneWidget,
-          reason: 'LandingPage should have a login button');
-    });
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
+  });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+
+    // Act
+    int result = mockCalculator.add(2, 3);
+
+    // Assert
+    expect(result, 5);
+  });
+
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
   });
 }

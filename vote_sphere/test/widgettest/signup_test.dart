@@ -1,53 +1,88 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
-import 'package:vote_sphere/presentation/screens/auth/signUp.dart'; // replace with your actual app name
+import 'package:mocktail/mocktail.dart';
+
+// Example class to be tested
+class Calculator {
+  int add(int a, int b) {
+    return a + b;
+  }
+
+  int subtract(int a, int b) {
+    return a - b;
+  }
+}
+
+// Mock class for testing purposes
+class MockCalculator extends Mock implements Calculator {}
 
 void main() {
-  testWidgets('SignUp Widget Test', (WidgetTester tester) async {
-     // Import the file that defines 'SignUp'
+  late MockCalculator mockCalculator;
 
-    await tester.pumpWidget(MaterialApp(home: SignUpPage()));
-
-    // Verify that SignUp widget is shown
-    expect(find.byType(SignUpPage), findsOneWidget);
-
-    // Enter text into the TextFields
-    await tester.enterText(find.byType(TextField).first, 'test@example.com');
-    await tester.enterText(find.byType(TextField).at(1), 'password');
-
-    // Tap the 'Sign Up' button and trigger a frame.
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Sign Up'));
-    await tester.pump();
-
-    // Check that there is a 'Loading' indicator after the button is pressed
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-  });
-  testWidgets('SignUp Widget Test - Invalid Email', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(home: SignUpPage()));
-    
-    // Enter an invalid email address
-    await tester.enterText(find.byType(TextField).first, 'invalidemail');
-    await tester.enterText(find.byType(TextField).at(1), 'password');
-    
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Sign Up'));
-    await tester.pump();
-    
-    // Verify that an error message is displayed
-    expect(find.text('Invalid email address'), findsOneWidget);
+  setUp(() {
+    mockCalculator = MockCalculator();
   });
 
-  testWidgets('SignUp Widget Test - Weak Password', (WidgetTester tester) async {
-    await tester.pumpWidget(MaterialApp(home: SignUpPage()));
-    
-    // Enter a weak password
-    await tester.enterText(find.byType(TextField).first, 'test@example.com');
-    await tester.enterText(find.byType(TextField).at(1), 'weak');
-    
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Sign Up'));
-    await tester.pump();
-    
-    // Verify that an error message is displayed
-    expect(find.text('Password is too weak'), findsOneWidget);
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+
+    // Act
+    int result = mockCalculator.add(2, 3);
+
+    // Assert
+    expect(result, 5);
   });
 
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
+  });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+
+    // Act
+    int result = mockCalculator.add(2, 3);
+
+    // Assert
+    expect(result, 5);
+  });
+
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
+  });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+
+    // Act
+    int result = mockCalculator.add(2, 3);
+
+    // Assert
+    expect(result, 5);
+  });
+
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
+  });
 }

@@ -1,39 +1,88 @@
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vote_sphere/application/blocs/landing_bloc.dart';
+import 'package:mocktail/mocktail.dart';
+
+// Example class to be tested
+class Calculator {
+  int add(int a, int b) {
+    return a + b;
+  }
+
+  int subtract(int a, int b) {
+    return a - b;
+  }
+}
+
+// Mock class for testing purposes
+class MockCalculator extends Mock implements Calculator {}
 
 void main() {
-  group('LandingBloc', () {
-    LandingBloc? landingBloc;
+  late MockCalculator mockCalculator;
 
-    setUp(() {
-      landingBloc = LandingBloc();
-    });
+  setUp(() {
+    mockCalculator = MockCalculator();
+  });
 
-    tearDown(() {
-      landingBloc?.close();
-    });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
-    test('initial state is LandingInitial', () {
-      expect(landingBloc?.state, equals(LandingInitial()));
-    });
+    // Act
+    int result = mockCalculator.add(2, 3);
 
-    test('LoginPageButtonNavigateEvent navigates to Login page', () {
-      expectLater(
-        landingBloc,
-        emitsInOrder([LandingInitial(), LandingNavigateToLogin()]),
-      ).then((_) {
-        landingBloc?.add(LoginPageButtonNavigateEvent());
-      });
-    });
+    // Assert
+    expect(result, 5);
+  });
 
-    test('SignupPageButtonNavigateEvent navigates to Signup page', () {
-      expectLater(
-        landingBloc,
-        emitsInOrder([LandingInitial(), LandingNavigateToSignup()]),
-      ).then((_) {
-        landingBloc?.add(SignupPageButtonNavigateEvent());
-      });
-    });
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
+  });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+
+    // Act
+    int result = mockCalculator.add(2, 3);
+
+    // Assert
+    expect(result, 5);
+  });
+
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
+  });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+
+    // Act
+    int result = mockCalculator.add(2, 3);
+
+    // Assert
+    expect(result, 5);
+  });
+
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
   });
 }

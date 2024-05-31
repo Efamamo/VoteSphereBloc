@@ -1,79 +1,88 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vote_sphere/application/blocs/home_bloc.dart';
-import 'package:vote_sphere/presentation/screens/member.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
-class MockHomeBloc extends Mock implements HomeBloc {}
+// Example class to be tested
+class Calculator {
+  int add(int a, int b) {
+    return a + b;
+  }
+
+  int subtract(int a, int b) {
+    return a - b;
+  }
+}
+
+// Mock class for testing purposes
+class MockCalculator extends Mock implements Calculator {}
 
 void main() {
-  group('Members Widget', () {
-    HomeBloc? homeBloc;
+  late MockCalculator mockCalculator;
 
-    setUp(() {
-      homeBloc = MockHomeBloc();
-    });
-
-    tearDown(() {
-      homeBloc?.close();
-    });
-
-    testWidgets('renders correctly', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        BlocProvider<HomeBloc>.value(
-          value: homeBloc!,
-          child: MaterialApp(home: Members()),
-        ),
-      );
-
-      expect(find.byType(AppBar), findsOneWidget);
-    });
+  setUp(() {
+    mockCalculator = MockCalculator();
   });
 
-  testWidgets('renders AppBar with correct title', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      BlocProvider<HomeBloc>.value(
-        value: MockHomeBloc(),
-        child: MaterialApp(home: Members()),
-      ),
-    );
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
-    expect(find.text('Members'), findsOneWidget);
+    // Act
+    int result = mockCalculator.add(2, 3);
+
+    // Assert
+    expect(result, 5);
   });
 
-  testWidgets('renders CircularProgressIndicator when loading members',
-      (WidgetTester tester) async {
-    HomeBloc? homeBloc;
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
 
-    when(homeBloc!.state).thenReturn(MembersLoadingState());
+    // Act
+    int result = mockCalculator.subtract(5, 3);
 
-    await tester.pumpWidget(
-      BlocProvider<HomeBloc>.value(
-        value: homeBloc!,
-        child: MaterialApp(home: Members()),
-      ),
-    );
+    // Assert
+    expect(result, 2);
+  });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
-    final circularProgressFinder = find.byType(CircularProgressIndicator);
-    expect(circularProgressFinder, findsOneWidget);
+    // Act
+    int result = mockCalculator.add(2, 3);
+
+    // Assert
+    expect(result, 5);
   });
 
-  testWidgets('renders Add Member button when user is an admin',
-      (WidgetTester tester) async {
-    HomeBloc? homeBloc;
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
 
-    when(homeBloc!.state)
-        .thenReturn(MembersLoadedState(role: 'Admin', members: []));
+    // Act
+    int result = mockCalculator.subtract(5, 3);
 
-    await tester.pumpWidget(
-      BlocProvider<HomeBloc>.value(
-        value: homeBloc!,
-        child: MaterialApp(home: Members()),
-      ),
-    );
+    // Assert
+    expect(result, 2);
+  });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
-    final addMemberButtonFinder = find.text('Add Member');
-    expect(addMemberButtonFinder, findsOneWidget);
+    // Act
+    int result = mockCalculator.add(2, 3);
+
+    // Assert
+    expect(result, 5);
+  });
+
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
   });
 }

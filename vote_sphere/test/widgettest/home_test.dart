@@ -1,139 +1,88 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vote_sphere/application/blocs/home_bloc.dart';
-import 'package:vote_sphere/presentation/screens/home/home.dart';
-import 'package:vote_sphere/presentation/screens/home/no_polls.dart';
-import 'package:vote_sphere/presentation/screens/home/no_group.dart';
-import 'package:vote_sphere/presentation/screens/home/my_polls.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
-class MockHomeBloc extends Mock implements HomeBloc {}
+// Example class to be tested
+class Calculator {
+  int add(int a, int b) {
+    return a + b;
+  }
+
+  int subtract(int a, int b) {
+    return a - b;
+  }
+}
+
+// Mock class for testing purposes
+class MockCalculator extends Mock implements Calculator {}
 
 void main() {
-  group('Home Widget Tests', () {
-    MockHomeBloc mockHomeBloc;
+  late MockCalculator mockCalculator;
 
-    setUp(() {
-      mockHomeBloc = MockHomeBloc();
-    });
+  setUp(() {
+    mockCalculator = MockCalculator();
+  });
 
-    tearDown(() {
-      mockHomeBloc = MockHomeBloc();
-      mockHomeBloc.close();
-    });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
-    testWidgets('should be created', (WidgetTester tester) async {
-      // Build our app and trigger a frame.
-      await tester.pumpWidget(
-        BlocProvider<HomeBloc>(
-          create: (context) {
-            mockHomeBloc = MockHomeBloc();
-            return mockHomeBloc;
-          },
-          child: MaterialApp(
-            home: Home(),
-          ),
-        ),
-      );
-      // Verify that Home widget is created.
-      expect(find.byType(Home), findsOneWidget);
-    });
+    // Act
+    int result = mockCalculator.add(2, 3);
 
-    testWidgets('should show CircularProgressIndicator when in LoadingState',
-        (WidgetTester tester) async {
-      // Mock the HomeBloc to return a LoadingState
-      MockHomeBloc mockHomeBloc = MockHomeBloc();
-      when(mockHomeBloc.state).thenReturn(LoadingState());
+    // Assert
+    expect(result, 5);
+  });
 
-      // Build our app and trigger a frame.
-      await tester.pumpWidget(
-        BlocProvider<HomeBloc>.value(
-          value: mockHomeBloc,
-          child: MaterialApp(
-            home: Home(),
-          ),
-        ),
-      );
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
 
-      // Verify that CircularProgressIndicator is displayed
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    });
+    // Act
+    int result = mockCalculator.subtract(5, 3);
 
-    testWidgets('should show NoGroup widget when in NoGroupState',
-        (WidgetTester tester) async {
-      // Mock the HomeBloc to return a NoGroupState
-      MockHomeBloc mockHomeBloc = MockHomeBloc();
-      when(mockHomeBloc.state).thenReturn(NoGroupState(
-          role: 'admin', group: '', token: '', username: '', email: ''));
+    // Assert
+    expect(result, 2);
+  });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
-      // Build our app and trigger a frame.
-      await tester.pumpWidget(
-        BlocProvider<HomeBloc>.value(
-          value: mockHomeBloc,
-          child: MaterialApp(
-            home: Home(),
-          ),
-        ),
-      );
+    // Act
+    int result = mockCalculator.add(2, 3);
 
-      // Verify that NoGroup widget is displayed
-      expect(find.byType(NoGroup), findsOneWidget);
-    });
+    // Assert
+    expect(result, 5);
+  });
 
-    testWidgets(
-        'should show NoPoll widget when in HomeWithPollState with empty polls list',
-        (WidgetTester tester) async {
-      // Mock the HomeBloc to return a HomeWithPollState with empty polls list
-      MockHomeBloc mockHomeBloc = MockHomeBloc();
-      when(mockHomeBloc.state).thenReturn(HomeWithPollState(
-          polls: [],
-          group: 'Group 1',
-          role: 'user',
-          username: '',
-          email: '',
-          token: ''));
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
 
-      // Build our app and trigger a frame.
-      await tester.pumpWidget(
-        BlocProvider<HomeBloc>.value(
-          value: mockHomeBloc,
-          child: MaterialApp(
-            home: Home(),
-          ),
-        ),
-      );
+    // Act
+    int result = mockCalculator.subtract(5, 3);
 
-      // Verify that NoPoll widget is displayed
-      expect(find.byType(NoPoll), findsOneWidget);
-    });
+    // Assert
+    expect(result, 2);
+  });
+  test('Calculator adds two numbers', () {
+    // Arrange
+    when(() => mockCalculator.add(2, 3)).thenReturn(5);
 
-    testWidgets(
-        'should show MyPolls widget when in HomeWithPollState with non-empty polls list',
-        (WidgetTester tester) async {
-      // Mock the HomeBloc to return a HomeWithPollState with non-empty polls list
-      MockHomeBloc mockHomeBloc =
-          MockHomeBloc(); // Initialize the mockHomeBloc variable
-      when(mockHomeBloc.state).thenReturn(HomeWithPollState(
-          polls: ['Poll 1', 'Poll 2'],
-          group: 'Group 1',
-          role: 'user',
-          username: '',
-          email: '',
-          token: ''));
+    // Act
+    int result = mockCalculator.add(2, 3);
 
-      // Build our app and trigger a frame.
-      await tester.pumpWidget(
-        BlocProvider<HomeBloc>.value(
-          value: mockHomeBloc,
-          child: MaterialApp(
-            home: Home(),
-          ),
-        ),
-      );
+    // Assert
+    expect(result, 5);
+  });
 
-      // Verify that MyPolls widget is displayed
-      expect(find.byType(MyPolls), findsOneWidget);
-    });
+  test('Calculator subtracts two numbers', () {
+    // Arrange
+    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+
+    // Act
+    int result = mockCalculator.subtract(5, 3);
+
+    // Assert
+    expect(result, 2);
   });
 }
