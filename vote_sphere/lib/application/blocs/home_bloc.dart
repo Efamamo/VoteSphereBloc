@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:vote_sphere/infrastructure/local_storage/secure_storage.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:vote_sphere/infrastructure/repositories/home_repository.dart';
 part '../../presentation/events/home_event.dart';
 part '../../presentation/states/home_state.dart';
