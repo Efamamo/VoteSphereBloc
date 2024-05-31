@@ -2,6 +2,7 @@ import 'package:vote_sphere/infrastructure/data_provider/home_dataprovider.dart'
 import 'package:vote_sphere/infrastructure/local_storage/secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:http/http.dart%20';
 
 class HomeRespository {
   static Future<Map> loadHome() async {
@@ -21,7 +22,7 @@ class HomeRespository {
         "email": email
       };
     } else {
-      final res = await HomeDataProvider.loadHome() as http.Response;
+      final res = await HomeDataProvider.loadHome() as Response;
       final jsonBody = jsonDecode(res.body);
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
@@ -50,7 +51,7 @@ class HomeRespository {
   static Future<bool> createGroup(event) async {
     final secureStorage = SecureStorage().secureStorage;
 
-    final res = await HomeDataProvider.createGroup(event) as http.Response;
+    final res = await HomeDataProvider.createGroup(event) as Response;
     if (res.statusCode >= 200 && res.statusCode < 300) {
       Map response = jsonDecode(res.body);
 
@@ -71,7 +72,8 @@ class HomeRespository {
         return false;
       }
 
-      final res = await HomeDataProvider.addComment(event) as http.Response;
+      final res = await HomeDataProvider.addPole(event) as Response;
+
       if (res.statusCode >= 200 && res.statusCode < 300) {
         return true;
       }
@@ -82,7 +84,7 @@ class HomeRespository {
   }
 
   static Future<bool> deletePoll(event) async {
-    final res = await HomeDataProvider.deletePoll(event) as http.Response;
+    final res = await HomeDataProvider.deletePoll(event) as Response;
 
     if (res.statusCode >= 200 && res.statusCode < 300) {
       return true;
@@ -92,16 +94,22 @@ class HomeRespository {
   }
 
   static Future<bool> vote(event) async {
-    final res = HomeDataProvider.vote(event) as http.Response;
-    if (res.statusCode == 200) {
-      return true;
-    } else {
+    try {
+      final res = await HomeDataProvider.vote(event) as Response;
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
       return false;
     }
   }
 
   static Future<bool> addComment(event) async {
-    final res = await HomeDataProvider.addComment(event) as http.Response;
+    final res = await HomeDataProvider.addComment(event) as Response;
 
     if (res.statusCode >= 200 && res.statusCode < 300) {
       return true;
@@ -111,7 +119,7 @@ class HomeRespository {
   }
 
   static Future<bool> updateComment(event) async {
-    final res = await HomeDataProvider.updateComment(event) as http.Response;
+    final res = await HomeDataProvider.updateComment(event) as Response;
 
     if (res.statusCode >= 200 && res.statusCode < 300) {
       return true;
@@ -121,7 +129,7 @@ class HomeRespository {
   }
 
   static Future<bool> deleteComment(event) async {
-    final res = await HomeDataProvider.deleteComment(event) as http.Response;
+    final res = await HomeDataProvider.deleteComment(event) as Response;
     if (res.statusCode >= 200 && res.statusCode < 300) {
       return true;
     }
@@ -132,7 +140,7 @@ class HomeRespository {
     final secureStorage = SecureStorage().secureStorage;
     final role = await secureStorage.read(key: 'role');
 
-    final res = await HomeDataProvider.getMembers(event) as http.Response;
+    final res = await HomeDataProvider.getMembers(event) as Response;
     if (res.statusCode >= 200 && res.statusCode < 300) {
       final decodedBody = jsonDecode(res.body);
       return {"members": decodedBody, "role": role};
@@ -142,7 +150,7 @@ class HomeRespository {
 
   static Future<bool> addMember(event) async {
     try {
-      final res = await HomeDataProvider.addMember(event) as http.Response;
+      final res = await HomeDataProvider.addMember(event) as Response;
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
         return true;
@@ -155,7 +163,7 @@ class HomeRespository {
   }
 
   static Future<bool> deleteMember(event) async {
-    final res = await HomeDataProvider.deleteMember(event) as http.Response;
+    final res = await HomeDataProvider.deleteMember(event) as Response;
 
     try {
       if (res.statusCode >= 200 && res.statusCode < 300) {

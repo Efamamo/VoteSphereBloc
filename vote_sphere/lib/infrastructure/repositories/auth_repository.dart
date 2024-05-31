@@ -1,13 +1,15 @@
 import 'dart:convert';
-
+import 'package:http/http.dart%20';
 import 'package:http/http.dart' as http;
 import 'package:vote_sphere/infrastructure/data_provider/auth_dataprovider.dart';
 import 'package:vote_sphere/infrastructure/local_storage/secure_storage.dart';
 
 class AuthRepository {
   static Future<String> login(event) async {
-    final res = await AuthDataProvider.login(event) as http.Response;
+    final res = await AuthDataProvider.login(event) as Response;
+
     Map response = jsonDecode(res.body);
+    print("response $response");
 
     if (response.containsKey('message')) {
       var error = response["message"];
@@ -31,7 +33,7 @@ class AuthRepository {
   }
 
   static Future<String> signUp(event) async {
-    final res = await AuthDataProvider.signUp(event) as http.Response;
+    final res = await AuthDataProvider.signUp(event) as Response;
     Map response = jsonDecode(res.body);
 
     if (res.statusCode != 201) {

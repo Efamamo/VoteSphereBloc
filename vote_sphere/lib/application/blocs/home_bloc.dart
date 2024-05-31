@@ -30,6 +30,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> loadHomeEvent(
       LoadHomeEvent event, Emitter<HomeState> emit) async {
     final res = await HomeRespository.loadHome();
+
     if (res['token'] == null) {
       emit(UnloggedState());
     } else if (res["group"] == null) {

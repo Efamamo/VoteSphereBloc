@@ -49,7 +49,6 @@ class _HomeState extends State<Home> {
           }
         },
         builder: (context, state) {
-          print(state);
           if (state is LoadingState) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -74,7 +73,7 @@ class _HomeState extends State<Home> {
                 ));
           } else if (state is HomeWithPollState) {
             final pollState = state as HomeWithPollState;
-            print(pollState.polls);
+
             if (pollState.polls.length == 0) {
               return Scaffold(
                   appBar: AppBar(

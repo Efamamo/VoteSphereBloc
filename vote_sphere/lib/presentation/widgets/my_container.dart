@@ -62,6 +62,7 @@ class MyContainer extends StatelessWidget {
       for (var option in options) {
         total += option["numberOfVotes"];
       }
+      print(total);
       return total;
     }
 

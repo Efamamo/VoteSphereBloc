@@ -1,3 +1,4 @@
+import 'package:vote_sphere/application/blocs/home_bloc.dart';
 import 'package:vote_sphere/infrastructure/local_storage/secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -75,20 +76,25 @@ class HomeDataProvider {
     return res;
   }
 
-  static Future<Object> vote(event) async {
-    final secureStorage = SecureStorage().secureStorage;
-    final token = await secureStorage.read(key: 'token');
+  static Future<Object> vote(VoteEvent event) async {
+    try {
+      final secureStorage = SecureStorage().secureStorage;
+      final token = await secureStorage.read(key: 'token');
 
-    String uri =
-        'http://10.0.2.2:9000/polls/${event.pollId}/vote?optionId=${event.optionId}';
-    final url = Uri.parse(uri);
-    final headers = {
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token'
-    };
+      String uri =
+          'http://10.0.2.2:9000/polls/${event.pollId}/vote?optionId=${event.optionId}';
+      final url = Uri.parse(uri);
+      final headers = {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $token'
+      };
 
-    final res = await http.patch(url, headers: headers);
-    return res;
+      final res = await http.patch(url, headers: headers);
+      return res;
+    } catch (e) {
+      print(e);
+      return {};
+    }
   }
 
   static Future<Object> addComment(event) async {
