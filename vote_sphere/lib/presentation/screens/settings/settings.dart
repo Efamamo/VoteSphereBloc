@@ -25,7 +25,7 @@ class _SettingsState extends State<Settings> {
         builder: (context) {
           final settingsBloc = BlocProvider.of<SettingsBloc>(context);
           TextEditingController newPassword = TextEditingController();
-          TextEditingController oldPassword = TextEditingController();
+
           return AlertDialog(
             backgroundColor: Colors.grey[200],
             title: const Text(
@@ -33,36 +33,21 @@ class _SettingsState extends State<Settings> {
               style: TextStyle(color: Colors.black),
             ),
             content: Container(
-              height: 150,
-              child: Column(
-                children: [
-                  TextField(
-                    controller: oldPassword,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                        hintText: 'Enter old Password',
-                        hintStyle: TextStyle(color: Colors.black)),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  TextField(
-                    controller: newPassword,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                        hintText: 'Enter new Password',
-                        hintStyle: TextStyle(color: Colors.black)),
-                  ),
-                ],
+              height: 50,
+              child: TextField(
+                controller: newPassword,
+                obscureText: true,
+                decoration: const InputDecoration(
+                    hintText: 'Enter new Password',
+                    hintStyle: TextStyle(color: Colors.black)),
               ),
             ),
             actions: [
               TextButton(
                 onPressed: () {
                   GoRouter.of(context).pop();
-                  settingsBloc.add(ChangePaswordEvent(
-                      newPassword: newPassword.text,
-                      oldPassword: oldPassword.text));
+                  settingsBloc
+                      .add(ChangePaswordEvent(newPassword: newPassword.text));
                 },
                 child: const Text(
                   "Change Password",

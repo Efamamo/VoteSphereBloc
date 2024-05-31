@@ -448,23 +448,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final res = await http.post(url, headers: headers, body: encodedBody);
       print(res.body);
 
-      final jsonBody = jsonDecode(res.body);
-
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        final currentState = state as MembersLoadedState;
-
-        final updatedMembers =
-            List<Map<String, dynamic>>.from(currentState.members)
-              ..add({
-                "username": jsonBody["username"],
-                "email": jsonBody["email"],
-                "isAdmin": jsonBody["isAdmin"]
-              });
-
-        emit(currentState.copyWith(members: updatedMembers));
+        add(LoadMembersEvent());
       } else {
-        emit(AddMemberErrorState(
-            error: jsonBody["message"] ?? 'Unknown error occurred'));
+        emit(AddMemberErrorState(error: 'Cant add the member'));
       }
     } catch (error) {
       print(error);

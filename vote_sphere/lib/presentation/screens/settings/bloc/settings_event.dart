@@ -9,8 +9,8 @@ class NavigateToChangePasswordEvent extends SettingsEvent {}
 
 class ChangePaswordEvent extends SettingsEvent {
   final newPassword;
-  final oldPassword;
-  ChangePaswordEvent({required this.newPassword, required this.oldPassword});
+
+  ChangePaswordEvent({required this.newPassword});
 }
 
 class DeleteAccountEvent extends SettingsEvent {}

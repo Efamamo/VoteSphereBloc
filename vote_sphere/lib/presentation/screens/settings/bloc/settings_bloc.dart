@@ -40,10 +40,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     final url = Uri.parse(uri);
     final secureStorage = SecureStorage().secureStorage;
     final token = await secureStorage.read(key: 'token');
-    final body = {
-      "oldPassword": event.oldPassword,
-      "newPassword": event.newPassword
-    };
+    final body = {"newPassword": event.newPassword};
     final jsonBody = jsonEncode(body);
     final headers = {
       "Content-Type": "application/json",
