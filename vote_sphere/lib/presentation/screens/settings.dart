@@ -156,7 +156,7 @@ class _SettingsState extends State<Settings> {
                         const SizedBox(
                           width: 20,
                         ),
-                        ElevatedButton(
+                        settingState.role == "User" ? ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5)),
@@ -166,7 +166,7 @@ class _SettingsState extends State<Settings> {
                               context.go('/');
                               settingsBloc.add(DeleteAccountEvent());
                             },
-                            child: Text("DeleteAccount")),
+                            child: Text("DeleteAccount")): SizedBox(),
                       ],
                     )
                   ],
