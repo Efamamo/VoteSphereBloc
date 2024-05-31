@@ -77,7 +77,7 @@ class _SettingsState extends State<Settings> {
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
         if (state is DeleteAccountState) {
-          context.go('/landing');
+          context.go('/');
         }
         if (state is ChangePasswordErrorState) {
           if (state.error == "Invalid password" ||
