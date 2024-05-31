@@ -23,7 +23,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       LoadSettingEvent event, Emitter<SettingsState> emit) async {
     Map res = await SettingsRepository.loadSetting(event);
 
-    emit(SettingsLoadedState(username: res["username"], email: res["email"]));
+    emit(SettingsLoadedState(username: res["username"], email: res["email"],role: res["role"]));
   }
 
   FutureOr<void> navigateToChangePasswordEvent(
