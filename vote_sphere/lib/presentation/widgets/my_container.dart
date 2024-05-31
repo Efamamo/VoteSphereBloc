@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
+import 'package:vote_sphere/application/blocs/home_bloc.dart';
 
 class MyContainer extends StatelessWidget {
   MyContainer({required this.poll, required this.role});

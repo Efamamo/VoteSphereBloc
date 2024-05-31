@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
+import 'package:vote_sphere/application/blocs/home_bloc.dart';
 import '../../widgets/my_container.dart';
 import 'package:go_router/go_router.dart';
-import '../new_poll_model.dart';
 
 class MyPolls extends StatefulWidget {
   MyPolls({super.key, required this.polls, required this.role});

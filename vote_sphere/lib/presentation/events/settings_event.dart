@@ -1,4 +1,4 @@
-part of 'settings_bloc.dart';
+part of '../../application/blocs/settings_bloc.dart';
 
 @immutable
 sealed class SettingsEvent {}

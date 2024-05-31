@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:vote_sphere/presentation/screens/auth/bloc/auth_bloc.dart';
-import '../../../Utils/extensions.dart';
+import 'package:vote_sphere/application/blocs/auth_bloc.dart';
+import '../../Utils/extensions.dart';
 import '../../widgets/forms.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';

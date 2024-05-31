@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vote_sphere/local_storage/secure_storage.dart';
-import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
+import 'package:vote_sphere/application/blocs/home_bloc.dart';
 import '../../widgets/my_drawer.dart';
 import 'my_polls.dart';
 import 'no_group.dart';

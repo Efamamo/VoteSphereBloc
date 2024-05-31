@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:vote_sphere/presentation/screens/auth/bloc/auth_bloc.dart';
-import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
-import 'package:vote_sphere/presentation/screens/settings/bloc/settings_bloc.dart';
-import 'presentation/screens/landing/landing_page.dart';
+import 'package:vote_sphere/application/blocs/auth_bloc.dart';
+import 'package:vote_sphere/application/blocs/home_bloc.dart';
+import 'package:vote_sphere/application/blocs/settings_bloc.dart';
+import 'presentation/screens/landing_page.dart';
 import 'presentation/screens/home/home.dart';
 import 'presentation/screens/auth/login.dart';
-import 'presentation/screens/settings/settings.dart';
+import 'presentation/screens/settings.dart';
 import 'presentation/screens/auth/signUp.dart';
 import 'presentation/screens/member.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'presentation/screens/new_polls.dart';
-import 'presentation/screens/new_poll_model.dart';
 
 void main() {
   runApp(MultiProvider(

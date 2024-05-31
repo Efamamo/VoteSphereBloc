@@ -1,4 +1,4 @@
-part of 'home_bloc.dart';
+part of '../../application/blocs/home_bloc.dart';
 
 @immutable
 sealed class HomeState {}
