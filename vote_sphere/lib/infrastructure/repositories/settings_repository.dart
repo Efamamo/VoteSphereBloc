@@ -7,12 +7,13 @@ class SettingsRepository {
     final secureStorage = SecureStorage().secureStorage;
     final username = await secureStorage.read(key: 'username');
     final email = await secureStorage.read(key: "email");
+    final role = await secureStorage.read(key: "role");
 
-    return {"username": username, "email": email};
+    return {"username": username, "email": email, "role" : role};
   }
 
   static Future<String> changePassword(event) async {
-    String uri = 'http://localhost:9000/auth/changePassword';
+    String uri = 'http://10.0.2.2:9000/auth/changePassword';
     final url = Uri.parse(uri);
     final secureStorage = SecureStorage().secureStorage;
     final token = await secureStorage.read(key: 'token');
@@ -40,7 +41,7 @@ class SettingsRepository {
   static Future<bool> deleteAccount() async {
     final secureStorage = SecureStorage().secureStorage;
     final token = await secureStorage.read(key: 'token');
-    String uri = 'http://localhost:9000/auth/deleteAccount';
+    String uri = 'http://10.0.2.2:9000/auth/deleteAccount';
     final url = Uri.parse(uri);
     final headers = {
       "Content-Type": "application/json",

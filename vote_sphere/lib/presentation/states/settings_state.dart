@@ -12,7 +12,8 @@ class SettingsLoadingState extends SettingsState {}
 class SettingsLoadedState extends SettingsState {
   final username;
   final email;
-  SettingsLoadedState({required this.username, required this.email});
+  final role;
+  SettingsLoadedState({required this.username, required this.email, required this.role});
 }
 
 class NavigateToUpdatePasswordState extends SettingsActionState {}

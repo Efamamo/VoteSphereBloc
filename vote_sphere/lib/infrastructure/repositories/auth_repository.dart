@@ -4,7 +4,7 @@ import 'package:vote_sphere/infrastructure/local_storage/secure_storage.dart';
 
 class AuthRepository {
   static Future<String> login(event) async {
-    String uri = 'http://localhost:9000/auth/signin';
+    String uri = 'http://10.0.2.2:9000/auth/signin';
     final url = Uri.parse(uri);
 
     final body = {"username": event.username, "password": event.password};
@@ -36,7 +36,7 @@ class AuthRepository {
   }
 
   static Future<String> signUp(event) async {
-    String uri = 'http://localhost:9000/auth/signup';
+    String uri = 'http://10.0.2.2:9000/auth/signup';
     final url = Uri.parse(uri);
     final body = {
       "username": event.username,
