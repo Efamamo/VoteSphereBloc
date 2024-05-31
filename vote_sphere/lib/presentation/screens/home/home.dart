@@ -6,6 +6,7 @@ import 'my_polls.dart';
 import 'no_group.dart';
 import 'no_polls.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -32,6 +33,9 @@ class _HomeState extends State<Home> {
         listenWhen: (previous, current) => current is HomeActionState,
         buildWhen: (previous, current) => current is! HomeActionState,
         listener: (context, state) {
+          if (state is UnloggedState) {
+            context.go('/');
+          }
           if (state is DeletePollErrorState) {
             final snackBar = SnackBar(
               content: Text(state.error),

@@ -119,3 +119,5 @@ class VoteError extends HomeActionState {
   final error;
   VoteError({required this.error});
 }
+
+class UnloggedState extends HomeActionState {}

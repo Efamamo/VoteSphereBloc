@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
 
 class MyContainer extends StatelessWidget {
@@ -8,6 +9,46 @@ class MyContainer extends StatelessWidget {
   var selected;
   var poll;
   var role;
+  void updateComment(context, data, poll, com) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          final homeBloc = BlocProvider.of<HomeBloc>(context);
+
+          TextEditingController comment = TextEditingController();
+          comment.text = data;
+
+          return AlertDialog(
+            backgroundColor: Colors.grey[200],
+            title: const Text(
+              "Update Comment",
+              style: TextStyle(color: Colors.black),
+            ),
+            content: Container(
+              height: 60,
+              child: TextField(
+                controller: comment,
+                decoration: const InputDecoration(
+                    hintText: 'Enter new Password',
+                    hintStyle: TextStyle(color: Colors.black)),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  GoRouter.of(context).pop();
+                  homeBloc.add(UpdateCommentEvent(
+                      comment: comment.text, pollId: poll, comId: com));
+                },
+                child: const Text(
+                  "Change Comment",
+                  style: TextStyle(color: Colors.black),
+                ),
+              )
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,12 +150,24 @@ class MyContainer extends StatelessWidget {
                       Text(com["commentText"]),
                     ],
                   ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red[800]),
-                    onPressed: () {
+                  PopupMenuButton(onSelected: (value) {
+                    if (value == "update") {
+                      updateComment(context, com["commentText"], pollId, comId);
+                    } else if (value == "delete") {
                       homeBloc.add(DeleteComment(comId: comId, pollId: pollId));
-                    },
-                  )
+                    }
+                  }, itemBuilder: (context) {
+                    return [
+                      const PopupMenuItem(
+                        value: 'delete',
+                        child: Text("Delete"),
+                      ),
+                      const PopupMenuItem(
+                        value: 'update',
+                        child: Text("Update"),
+                      ),
+                    ];
+                  })
                 ],
               ),
             );

@@ -25,6 +25,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<LoadMembersEvent>(loadMembersEvent);
     on<AddMemberEvent>(addMemberEvent);
     on<DeleteMemberEvent>(deleteMemberEvent);
+    on<UpdateCommentEvent>(updateCommentEvent);
   }
 
   FutureOr<void> loadHomeEvent(
@@ -37,6 +38,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final username = await secureStorage.read(key: 'username');
     final token = await secureStorage.read(key: 'token');
     final email = await secureStorage.read(key: "email");
+
+    if (token == null) {
+      emit(UnloggedState());
+    }
 
     if (group == null) {
       emit(NoGroupState(
@@ -275,6 +280,65 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else {
       // Handle error if needed
       print('Failed to add comment: ${res.statusCode}');
+    }
+  }
+
+  FutureOr<void> updateCommentEvent(
+      UpdateCommentEvent event, Emitter<HomeState> emit) async {
+    final secureStorage = SecureStorage().secureStorage;
+    final token = await secureStorage.read(key: 'token');
+
+    String uri = 'http://localhost:9000/polls/comments/${event.comId}';
+    final url = Uri.parse(uri);
+    final body = {"commentText": event.comment};
+
+    final jsonBody = jsonEncode(body);
+    final headers = {
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token'
+    };
+
+    final res = await http.patch(url, headers: headers, body: jsonBody);
+
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      if (state is HomeWithPollState) {
+        final currentState = state as HomeWithPollState;
+
+        // Update polls immutably
+        final updatedPolls = currentState.polls.map((poll) {
+          if (poll['id'] == event.pollId) {
+            // Check if comments exist
+            if (poll['comments'] != null) {
+              // Create a new list with the updated comment
+              final updatedComments = poll['comments'].map((comment) {
+                if (comment['id'] == event.comId) {
+                  // Return a new updated comment map
+                  return {
+                    ...comment,
+                    "commentText": event.comment,
+                  };
+                }
+                return comment;
+              }).toList();
+
+              // Return a new updated poll map
+              return {
+                ...poll,
+                'comments': updatedComments,
+              };
+            }
+          }
+          return poll;
+        }).toList();
+
+        emit(currentState.copyWith(polls: updatedPolls));
+      } else {
+        // Handle the case where the state is not HomeWithPollState
+        print('Current state is not HomeWithPollState');
+      }
+    } else {
+      final jsonBody = jsonDecode(res.body);
+      emit(DeletePollErrorState(error: jsonBody['message'] ?? 'Unknown error'));
     }
   }
 

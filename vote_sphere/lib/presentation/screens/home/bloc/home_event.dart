@@ -60,3 +60,11 @@ class DeleteMemberEvent extends HomeEvent {
   final username;
   DeleteMemberEvent({required this.username});
 }
+
+class UpdateCommentEvent extends HomeEvent {
+  final comment;
+  final pollId;
+  final comId;
+  UpdateCommentEvent(
+      {required this.comment, required this.comId, required this.pollId});
+}
