@@ -1,67 +1,39 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-
-// Example class to be tested
-class Calculator {
-  int add(int a, int b) {
-    return a + b;
-  }
-
-  int subtract(int a, int b) {
-    return a - b;
-  }
-}
-
-// Mock class for testing purposes
-class MockCalculator extends Mock implements Calculator {}
+import 'package:vote_sphere/application/blocs/landing_bloc.dart';
 
 void main() {
-  late MockCalculator mockCalculator;
+  group('LandingBloc', () {
+    LandingBloc? landingBloc;
 
-  setUp(() {
-    mockCalculator = MockCalculator();
-  });
+    setUp(() {
+      landingBloc = LandingBloc();
+    });
 
-  test('go to login on sucess', () {
-    // Arrange
-    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+    tearDown(() {
+      landingBloc?.close();
+    });
 
-    // Act
-    int result = mockCalculator.add(2, 3);
+    test('initial state is LandingInitial', () {
+      expect(landingBloc?.state, equals(LandingInitial()));
+    });
 
-    // Assert
-    expect(result, 5);
-  });
+    test('LoginPageButtonNavigateEvent navigates to Login page', () {
+      expectLater(
+        landingBloc,
+        emitsInOrder([LandingInitial(), LandingNavigateToLogin()]),
+      ).then((_) {
+        landingBloc?.add(LoginPageButtonNavigateEvent());
+      });
+    });
 
-  test('go to login on failure', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
-
-    // Act
-    int result = mockCalculator.subtract(5, 3);
-
-    // Assert
-    expect(result, 2);
-  });
-  test('go to signup on success', () {
-    // Arrange
-    when(() => mockCalculator.add(2, 3)).thenReturn(5);
-
-    // Act
-    int result = mockCalculator.add(2, 3);
-
-    // Assert
-    expect(result, 5);
-  });
-
-  test('go to signup on failure', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
-
-    // Act
-    int result = mockCalculator.subtract(5, 3);
-
-    // Assert
-    expect(result, 2);
+    test('SignupPageButtonNavigateEvent navigates to Signup page', () {
+      expectLater(
+        landingBloc,
+        emitsInOrder([LandingInitial(), LandingNavigateToSignup()]),
+      ).then((_) {
+        landingBloc?.add(SignupPageButtonNavigateEvent());
+      });
+    });
   });
 }

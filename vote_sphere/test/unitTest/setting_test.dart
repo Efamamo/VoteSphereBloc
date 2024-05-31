@@ -1,67 +1,92 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:vote_sphere/application/blocs/settings_bloc.dart';
+import 'package:vote_sphere/infrastructure/repositories/settings_repository.dart';
 
-// Example class to be tested
-class Calculator {
-  int add(int a, int b) {
-    return a + b;
+class MockSettingsRepository extends Mock implements SettingsRepository {
+  Future<Map<String, String>> loadSetting(String userId) async {
+    return {"username": "testUser", "email": "test@example.com"};
   }
 
-  int subtract(int a, int b) {
-    return a - b;
+  Future<String> changePassword(String currentPassword, String newPassword) async {
+    return "success";
+  }
+
+  Future<bool> deleteAccount() async {
+    return true;
   }
 }
 
-// Mock class for testing purposes
-class MockCalculator extends Mock implements Calculator {}
+// New event class
+// New event class
+class ChangePasswordEvent extends SettingsBloc{
+  final String currentPassword;
+  final String newPassword;
+
+  ChangePasswordEvent({required this.currentPassword, required this.newPassword});
+}
 
 void main() {
-  late MockCalculator mockCalculator;
+  group('SettingsBloc', () {
+    late SettingsBloc bloc;
+    late MockSettingsRepository mockSettingsRepository;
 
-  setUp(() {
-    mockCalculator = MockCalculator();
-  });
+    setUp(() {
+      mockSettingsRepository = MockSettingsRepository();
+      bloc = SettingsBloc();
+    });
 
-  test('go to member on sucess', () {
-    // Arrange
-    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+    tearDown(() {
+      bloc.close();
+    });
 
-    // Act
-    int result = mockCalculator.add(2, 3);
+    test('initial state is SettingsInitial', () {
+      expect(bloc.state, SettingsInitial());
+    });
 
-    // Assert
-    expect(result, 5);
-  });
+    group('LoadSettingEvent', () {
+      blocTest<SettingsBloc, SettingsState>(
+        'emits [SettingsLoadedState] when successful',
+        build: () {
+          when(() => mockSettingsRepository.loadSetting(any()))
+         .thenAnswer((_) async => {"username": "testUser", "email": "test@example.com"});
+          return bloc;
+        },
+        act: (bloc) => bloc.add(LoadSettingEvent()),
+        expect: () => [SettingsLoadedState(username: "testUser", email: "test@example.com", role: null)],
+      );
+    });
 
-  test('go to member on failure', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+    group('NavigateToChangePasswordEvent', () {
+      blocTest<SettingsBloc, SettingsState>(
+        'emits [NavigateToUpdatePasswordState] when successful',
+        build: () => bloc,
+        act: (bloc) => bloc.add(NavigateToChangePasswordEvent()),
+        expect: () => [NavigateToUpdatePasswordState()],
+      );
+    });
 
-    // Act
-    int result = mockCalculator.subtract(5, 3);
+    group('DeleteAccountEvent', () {
+      blocTest<SettingsBloc, SettingsState>(
+        'emits [DeleteAccountState] when successful',
+        build: () {
+          when(() => mockSettingsRepository.deleteAccount()).thenAnswer((_) async => true);
+          return bloc;
+        },
+        act: (bloc) => bloc.add(DeleteAccountEvent()),
+        expect: () => [DeleteAccountState()],
+      );
 
-    // Assert
-    expect(result, 2);
-  });
-  test('changing password on sucess', () {
-    // Arrange
-    when(() => mockCalculator.add(2, 3)).thenReturn(5);
-
-    // Act
-    int result = mockCalculator.add(2, 3);
-
-    // Assert
-    expect(result, 5);
-  });
-
-  test('changing password on failure', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
-
-    // Act
-    int result = mockCalculator.subtract(5, 3);
-
-    // Assert
-    expect(result, 2);
+      blocTest<SettingsBloc, SettingsState>(
+        'emits [ChangePasswordErrorState] when unsuccessful',
+        build: () {
+          when(() => mockSettingsRepository.deleteAccount()).thenAnswer((_) async => false);
+          return bloc;
+        },
+        act: (bloc) => bloc.add(DeleteAccountEvent()),
+        expect: () => [ChangePasswordErrorState(error: "cant delete the account now")],
+      );
+    });
   });
 }

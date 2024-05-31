@@ -1,88 +1,70 @@
+import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:vote_sphere/application/blocs/auth_bloc.dart';
+import 'package:vote_sphere/infrastructure/local_storage/secure_storage.dart';
 
-// Example class to be tested
-class Calculator {
-  int add(int a, int b) {
-    return a + b;
-  }
-
-  int subtract(int a, int b) {
-    return a - b;
-  }
-}
-
-// Mock class for testing purposes
-class MockCalculator extends Mock implements Calculator {}
+class MockSecureStorage extends Mock implements FlutterSecureStorage {}
 
 void main() {
-  late MockCalculator mockCalculator;
+  group('AuthBloc', () {
+    late AuthBloc authBloc;
+    late MockSecureStorage mockSecureStorage;
 
-  setUp(() {
-    mockCalculator = MockCalculator();
-  });
+    setUp(() {
+      mockSecureStorage = MockSecureStorage();
+      when(() =>
+              mockSecureStorage.write(key: captureAny(), value: captureAny()))
+          .thenAnswer((_) async => null);
+      when(() => mockSecureStorage.deleteAll()).thenAnswer((_) async => null);
 
-  test('logging to the app', () {
-    // Arrange
-    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+      authBloc = AuthBloc()
+        ..add(LogInEvent(username: 'test', password: 'test'));
+    });
 
-    // Act
-    int result = mockCalculator.add(2, 3);
+    tearDown(() {
+      authBloc.close();
+    });
 
-    // Assert
-    expect(result, 5);
-  });
+    test('initial state is AuthInitial', () {
+      expect(authBloc.state, equals(AuthInitial()));
+    });
 
-  test('signinig to app', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+    blocTest<AuthBloc, AuthState>(
+      'emits [LogInSuccessState] when LogInEvent is added',
+      build: () {
+        when(() =>
+                mockSecureStorage.write(key: captureAny(), value: captureAny()))
+            .thenAnswer((_) async {});
+        return AuthBloc()..add(LogInEvent(username: 'test', password: 'test'));
+      },
+      act: (AuthBloc bloc) =>
+          bloc.add(LogInEvent(username: 'test', password: 'test')),
+      expect: () => [LogInSuccessState()],
+      verify: (_) {
+        verify(() =>
+                mockSecureStorage.write(key: captureAny(), value: captureAny()))
+            .called(5);
+      },
+    );
 
-    // Act
-    int result = mockCalculator.subtract(5, 3);
-
-    // Assert
-    expect(result, 2);
-  });
-  test('signing by admin', () {
-    // Arrange
-    when(() => mockCalculator.add(2, 3)).thenReturn(5);
-
-    // Act
-    int result = mockCalculator.add(2, 3);
-
-    // Assert
-    expect(result, 5);
-  });
-
-  test('signing by user', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
-
-    // Act
-    int result = mockCalculator.subtract(5, 3);
-
-    // Assert
-    expect(result, 2);
-  });
-  test('sign out by user', () {
-    // Arrange
-    when(() => mockCalculator.add(2, 3)).thenReturn(5);
-
-    // Act
-    int result = mockCalculator.add(2, 3);
-
-    // Assert
-    expect(result, 5);
-  });
-
-  test('signup failure', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
-
-    // Act
-    int result = mockCalculator.subtract(5, 3);
-
-    // Assert
-    expect(result, 2);
+    blocTest<AuthBloc, AuthState>(
+      'emits [LogInErrorState] when LogInEvent is added with invalid credentials',
+      build: () {
+        when(() =>
+                mockSecureStorage.write(key: captureAny(), value: captureAny()))
+            .thenAnswer((_) async => null);
+        return AuthBloc()
+          ..add(LogInEvent(username: 'invalid', password: 'invalid'));
+      },
+      act: (AuthBloc bloc) =>
+          bloc.add(LogInEvent(username: 'invalid', password: 'invalid')),
+      expect: () => [LogInErrorState(error: 'Invalid username or password.')],
+      verify: (_) {
+        verifyNever(() => mockSecureStorage.write(
+            key: any(named: 'key'), value: any(named: 'value')));
+      },
+    );
   });
 }

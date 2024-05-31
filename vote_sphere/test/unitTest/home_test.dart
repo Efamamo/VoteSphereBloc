@@ -1,88 +1,96 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:http/http.dart';
+import 'package:mockito/mockito.dart';
+import 'package:vote_sphere/application/blocs/auth_bloc.dart';
+import 'package:vote_sphere/application/blocs/home_bloc.dart';
+import 'auth_test.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-// Example class to be tested
-class Calculator {
-  int add(int a, int b) {
-    return a + b;
-  }
+// Define the PollDeletedState class
+class PollDeletedState {
+  final int pollId;
 
-  int subtract(int a, int b) {
-    return a - b;
-  }
+  PollDeletedState({required this.pollId});
 }
 
-// Mock class for testing purposes
-class MockCalculator extends Mock implements Calculator {}
-
 void main() {
-  late MockCalculator mockCalculator;
+  group('HomeBloc', () {
+    HomeBloc homeBloc;
+    MockSecureStorage secureStorage;
 
-  setUp(() {
-    mockCalculator = MockCalculator();
-  });
+    final List<Map<String, dynamic>> polls = [
+      {'id': 1, 'question': 'Question 1', 'options': ['Option 1', 'Option 2']},
+      {'id': 2, 'question': 'Question 2', 'options': ['Option 3', 'Option 4']}
+    ];
 
-  test('adding member on sucess', () {
-    // Arrange
-    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+    setUp(() {
+      secureStorage = MockSecureStorage();
+      homeBloc = HomeBloc();
+    });
 
-    // Act
-    int result = mockCalculator.add(2, 3);
+    test('LoadHomeEvent should emit HomeWithPollState', () async {
+      // Mock the necessary dependencies
+      MockSecureStorage secureStorage = MockSecureStorage();
+      when(secureStorage.read(key: 'group')).thenAnswer((_) async => 'group1');
+      when(secureStorage.read(key: 'role')).thenAnswer((_) async => 'admin');
+      when(secureStorage.read(key: 'username')).thenAnswer((_) async => 'user1');
+      when(secureStorage.read(key: 'token')).thenAnswer((_) async => 'token1');
+      when(secureStorage.read(key: 'email')).thenAnswer((_) async => 'email1');
 
-    // Assert
-    expect(result, 5);
-  });
+      // Mock the HTTP response
+      final polls = [
+        {'id': 1, 'question': 'Question 1', 'options': ['Option 1', 'Option 2']},
+        {'id': 2, 'question': 'Question 2', 'options': ['Option 3', 'Option 4']}
+      ];
+      when(http.get(Uri.parse('http://localhost:9000/polls'), headers: anyNamed('headers')))
+        .thenAnswer((_) async => Response(jsonEncode(polls), 200));
 
-  test('adding poll on success', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+      // Add the LoadHomeEvent to the bloc
+      HomeBloc homeBloc = HomeBloc();
+      homeBloc.add(LoadHomeEvent());
 
-    // Act
-    int result = mockCalculator.subtract(5, 3);
+      // Expect the HomeWithPollState to be emitted
+      expectLater(homeBloc, emitsInOrder([
+        isA<HomeWithPollState>().having((state) => state.group, 'group', 'group1'),
+        isA<HomeWithPollState>().having((state) => state.username, 'username', 'user1'),
+        isA<HomeWithPollState>().having((state) => state.polls, 'polls', polls),
+        isA<HomeWithPollState>().having((state) => state.role, 'role', 'admin'),
+        isA<HomeWithPollState>().having((state) => state.email, 'email', 'email1'),
+        isA<HomeWithPollState>().having((state) => state.token, 'token', 'token1'),
+      ]));
 
-    // Assert
-    expect(result, 2);
-  });
-  test('adding question on success', () {
-    // Arrange
-    when(() => mockCalculator.add(2, 3)).thenReturn(5);
+      // Run the test
+      await homeBloc.close();
+    });
 
-    // Act
-    int result = mockCalculator.add(2, 3);
+    test('DeletePollEvent should emit PollDeletedState', () async {
+      // Mock the necessary dependencies
+      MockSecureStorage secureStorage = MockSecureStorage();
+      when(secureStorage.read(key: 'group')).thenAnswer((_) async => 'group1');
+      when(secureStorage.read(key: 'token')).thenAnswer((_) async => 'token1');
 
-    // Assert
-    expect(result, 5);
-  });
+      // Mock the HTTP response
+      when(http.delete(Uri.parse('http://localhost:9000/polls/1'), headers: anyNamed('headers')))
+        .thenAnswer((_) async => Response('', 200));
 
-  test('adding answers on failure', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+      // Add the DeletePollEvent to the bloc
+      HomeBloc homeBloc = HomeBloc();
+      homeBloc.add(DeletePollEvent(pollId: 1));
 
-    // Act
-    int result = mockCalculator.subtract(5, 3);
+      // Expect the PollDeletedState to be emitted
+      expectLater(homeBloc, emitsInOrder([
+        isA<HomeWithPollState>().having((state) => state.group, 'group', 'group1'),
+        isA<HomeWithPollState>().having((state) => state.username, 'username', 'user1'),
+        isA<HomeWithPollState>().having((state) => state.polls, 'polls', polls),
+        isA<HomeWithPollState>().having((state) => state.role, 'role', 'admin'),
+        isA<HomeWithPollState>().having((state) => state.email, 'email', 'email1'),
+        isA<HomeWithPollState>().having((state) => state.token, 'token', 'token1'),
+        isA<PollDeletedState>().having((state) => state.pollId, 'pollId', 1),
+      ]));
 
-    // Assert
-    expect(result, 2);
-  });
-  test('changing password on sucess', () {
-    // Arrange
-    when(() => mockCalculator.add(2, 3)).thenReturn(5);
-
-    // Act
-    int result = mockCalculator.add(2, 3);
-
-    // Assert
-    expect(result, 5);
-  });
-
-  test('changing password on failure', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
-
-    // Act
-    int result = mockCalculator.subtract(5, 3);
-
-    // Assert
-    expect(result, 2);
+      // Run the test
+      await homeBloc.close();
+    });
   });
 }

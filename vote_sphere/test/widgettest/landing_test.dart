@@ -1,46 +1,63 @@
+import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vote_sphere/application/blocs/landing_bloc.dart';
+import 'package:vote_sphere/presentation/screens/landing_page.dart';
 
-// Example class to be tested
-class Calculator {
-  int add(int a, int b) {
-    return a + b;
-  }
-
-  int subtract(int a, int b) {
-    return a - b;
-  }
-}
-
-// Mock class for testing purposes
-class MockCalculator extends Mock implements Calculator {}
+class MockLandingBloc extends MockBloc<LandingEvent, LandingState>
+    implements LandingBloc {}
 
 void main() {
-  late MockCalculator mockCalculator;
+  LandingBloc landingBloc =
+      MockLandingBloc(); // Initialize the landingBloc variable
 
   setUp(() {
-    mockCalculator = MockCalculator();
+    landingBloc = MockLandingBloc();
   });
 
-  test('go to login on sucess', () {
-    // Arrange
-    when(() => mockCalculator.add(2, 3)).thenReturn(5);
-
-    // Act
-    int result = mockCalculator.add(2, 3);
-
-    // Assert
-    expect(result, 5);
+  tearDown(() {
+    landingBloc.close();
   });
 
-  test('go to login on failure', () {
-    // Arrange
-    when(() => mockCalculator.subtract(5, 3)).thenReturn(2);
+  group('LandingPage Widget Tests', () {
+    testWidgets('LandingPage should be created and rendered',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        BlocProvider<LandingBloc>.value(
+          value: landingBloc,
+          child: MaterialApp(home: LandingPage()),
+        ),
+      );
 
-    // Act
-    int result = mockCalculator.subtract(5, 3);
+      expectLater(find.byType(LandingPage), findsOneWidget,
+          reason: 'LandingPage should be created and rendered');
+    });
 
-    // Assert
-    expect(result, 2);
+    testWidgets('LandingPage should display a welcome message',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        BlocProvider<LandingBloc>.value(
+          value: landingBloc,
+          child: MaterialApp(home: LandingPage()),
+        ),
+      );
+
+      expectLater(find.text('Welcome to VoteSphere'), findsOneWidget,
+          reason: 'LandingPage should display a welcome message');
+    });
+
+    testWidgets('LandingPage should have a login button',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        BlocProvider<LandingBloc>.value(
+          value: landingBloc,
+          child: MaterialApp(home: LandingPage()),
+        ),
+      );
+
+      expectLater(find.byKey(Key('loginButton')), findsOneWidget,
+          reason: 'LandingPage should have a login button');
+    });
   });
 }
