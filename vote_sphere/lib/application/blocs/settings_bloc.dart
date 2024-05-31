@@ -1,11 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:vote_sphere/infrastructure/local_storage/secure_storage.dart';
-import 'package:http/http.dart' as http;
 import 'package:vote_sphere/infrastructure/repositories/settings_repository.dart';
 
 part '../../presentation/events/settings_event.dart';
@@ -23,7 +19,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       LoadSettingEvent event, Emitter<SettingsState> emit) async {
     Map res = await SettingsRepository.loadSetting(event);
 
-    emit(SettingsLoadedState(username: res["username"], email: res["email"],role: res["role"]));
+    emit(SettingsLoadedState(
+        username: res["username"], email: res["email"], role: res["role"]));
   }
 
   FutureOr<void> navigateToChangePasswordEvent(
@@ -44,9 +41,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
   FutureOr<void> deleteAccountEvent(
       DeleteAccountEvent event, Emitter<SettingsState> emit) async {
-    bool res = await SettingsRepository.deleteAccount();
-   
-      emit(DeleteAccountState());
-    
+    await SettingsRepository.deleteAccount();
+
+    emit(DeleteAccountState());
   }
 }
