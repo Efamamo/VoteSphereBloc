@@ -45,10 +45,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   FutureOr<void> deleteAccountEvent(
       DeleteAccountEvent event, Emitter<SettingsState> emit) async {
     bool res = await SettingsRepository.deleteAccount();
-    if (res) {
+   
       emit(DeleteAccountState());
-    } else {
-      emit(ChangePasswordErrorState(error: "cant delete the account now"));
-    }
+    
   }
 }
