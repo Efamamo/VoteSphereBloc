@@ -1,4 +1,4 @@
-part of 'auth_bloc.dart';
+part of '../../application/blocs/auth_bloc.dart';
 
 @immutable
 sealed class AuthState {}

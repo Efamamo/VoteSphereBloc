@@ -1,4 +1,4 @@
-part of 'settings_bloc.dart';
+part of '../../application/blocs/settings_bloc.dart';
 
 @immutable
 sealed class SettingsState {}
@@ -23,3 +23,5 @@ class ChangePasswordErrorState extends SettingsActionState {
   final error;
   ChangePasswordErrorState({required this.error});
 }
+
+class DeleteAccountState extends SettingsActionState {}

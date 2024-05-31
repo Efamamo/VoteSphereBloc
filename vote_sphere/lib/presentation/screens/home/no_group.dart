@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vote_sphere/local_storage/secure_storage.dart';
-import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
+import 'package:vote_sphere/infrastructure/local_storage/secure_storage.dart';
+import 'package:vote_sphere/application/blocs/home_bloc.dart';
 import '../../widgets/alertdialog.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

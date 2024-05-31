@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:vote_sphere/local_storage/secure_storage.dart';
-import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
+import 'package:vote_sphere/infrastructure/local_storage/secure_storage.dart';
+import 'package:vote_sphere/application/blocs/home_bloc.dart';
 
-part 'landing_event.dart';
-part 'landing_state.dart';
+part '../../presentation/events/landing_event.dart';
+part '../../presentation/states/landing_state.dart';
 
 class LandingBloc extends Bloc<LandingEvent, LandingState> {
   LandingBloc() : super(LandingInitial()) {

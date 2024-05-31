@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vote_sphere/presentation/screens/home/bloc/home_bloc.dart';
-import 'package:vote_sphere/presentation/screens/settings/bloc/settings_bloc.dart';
+import 'package:vote_sphere/application/blocs/home_bloc.dart';
+import 'package:vote_sphere/application/blocs/settings_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class Settings extends StatefulWidget {
@@ -76,6 +76,9 @@ class _SettingsState extends State<Settings> {
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
+        if (state is DeleteAccountState) {
+          context.go('/landing');
+        }
         if (state is ChangePasswordErrorState) {
           if (state.error == "Invalid password" ||
               state.error == "old password cannot be empty") {
@@ -133,11 +136,6 @@ class _SettingsState extends State<Settings> {
                       leading: const Icon(Icons.person),
                       title: Text("username"),
                       subtitle: Text(settingState.username.toString()),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.email),
-                      title: Text("email"),
-                      subtitle: Text(settingState.email.toString()),
                     ),
                     const SizedBox(
                       height: 50,

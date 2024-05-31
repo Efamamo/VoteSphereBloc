@@ -1,4 +1,4 @@
-part of 'landing_bloc.dart';
+part of '../../application/blocs/landing_bloc.dart';
 
 @immutable
 sealed class LandingEvent {}
